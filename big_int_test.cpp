@@ -33,4 +33,43 @@ void check(bool condition)
 
 int main()
 {
+    //open log file to contain testing results
+    /* Referenced the following for filesystem class:
+           https://en.cppreference.com/w/cpp/filesystem/path
+           https://en.cppreference.com/w/cpp/filesystem/exists
+    */
+
+    // Check if log file name already exists, if so keep on appending a number to end of file name
+    string log_file_name = "log_file_big_int_tests";
+    string log_file_type = ".txt";
+    string log_file = log_file_name + log_file_type;
+    filesystem::path out_path(log_file);
+    int file_num = 1;
+    string original_log_file = log_file;
+    while (filesystem::exists(out_path))
+    {
+        log_file = log_file_name + "_" + to_string(file_num) + log_file_type;
+        out_path.replace_filename(log_file);
+        file_num += 1;
+    }
+
+    // Open log file and check to ensure it opens
+    ofstream log(log_file, ios::app);
+    if (!log.is_open())
+    {
+        cout << "Error opening file " << log_file << "!\n";
+        return -1;
+    }
+
+    // Inform file writing solution to
+    if (original_log_file != log_file)
+        cout << "Original Log File " << original_log_file << " already exists and thus writing test logs to file: " << log_file << "\n";
+    else
+        cout << "Writing test logs to " << log_file << "\n";
+
+    // Run tests and Write output to log files
+
+    // Close log file and inform done writing
+    log.close();
+    cout << "Finished testing the big_int class, see the log file " << log_file << " for all the information.";
 }

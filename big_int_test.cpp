@@ -1,7 +1,7 @@
 /**
- * @file main.cpp
+ * @file big_int_test.cpp
  * @author Gabrielle Ching-Johnson
- * @brief
+ * @brief This file runs unit tests for the big_int class
  * @version 0.1
  * @date Dec 7, 2021
  */

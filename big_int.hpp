@@ -124,6 +124,9 @@ private:
     // List containing all coefficients for the big number starting with least significant at index 0
     vector<uint64_t> coefficient;
 
+    // Type sign that indications the sign of the integer (positive or negative)
+    sign integer_sign = sign::POSITIVE;
+
     /**
      * @brief Increases the number of coefficients for the Big Integers by adding leading zeros
      * @param num_zeros The number of leading zeros to add

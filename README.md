@@ -9,9 +9,9 @@ Therefore this library was made in order to allow for any integer of any precisi
 
 ## Library Basic Features
 
-This library create a type called BigInt and can model signed integers, thus both negative and positive integers can be portrayed. ***Input something about maximum size due to space on computer***
+This library create a type called "big_int" and can model signed integers, thus both negative and positive integers can be portrayed. ***Input something about maximum size due to space on computer***
 
-The operations that can occur on BigInts in the library are:
+The operations that can occur on "big_int"s in the library are:
 * addition
 * subtraction
 * multiplication

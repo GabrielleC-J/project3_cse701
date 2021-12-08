@@ -38,6 +38,15 @@ void check(bool condition, ofstream file)
     }
 }
 
+/**
+ * @brief Prints desired string to a file
+ * @param file The file to print line to
+ */
+void printline(string line, ofstream file)
+{
+    file << line;
+}
+
 /********************************************* Test Functions **********************************************/
 
 int main()

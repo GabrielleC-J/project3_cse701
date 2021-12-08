@@ -2,7 +2,7 @@
 /**
  * @file big_int.hpp
  * @author Gabrielle Ching-Johnson
- * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int
+ * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
  * @version 0.1
  * @date Dec 8, 2021
  */
@@ -12,9 +12,14 @@
 #include <string>
 using namespace std;
 
+/**
+ * @brief This class represents a big integer that can hold integers bigger than the maximum 64 bits and can do arbitrary precision integer arithmetic
+ */
 class big_int
 {
+
 public:
+    /************************** Constructors ****************************/
     /**
      * @brief Initialize a big integer with value 0
      */
@@ -47,24 +52,34 @@ public:
     big_int(const vector<uint32_t> &vec);
 
     /**
-     * @brief Copy Constructor -> Intialize a big integer from another big integer
-     * @param bigInt A big_int to copy
+     * @brief Copy Constructor -> Initialize a big integer(big_int) from another big integer
+     * @param big_integer A big_int to copy
      */
-    big_int(const big_int &bigInt);
+    big_int(const big_int &big_integer);
+
+    /******************* Public Member Functions *******************/
+    /**
+     * @brief Adds another big integer to this big interger
+     * @param num A big_int that is to be added
+     */
+    void add(const big_int &num);
 
     /**
-     * @brief Adds another Big integer to this Big interger
-     * @param num A big integer that is to be added
-     * @return A Big integer that is the sum of the two Big integers
+     * @brief Subtracts another big integer from this Big integer
+     * @param num A big_int that is to be added
      */
-    big_int add(const big_int &num);
+    void sub(big_int &num);
 
     /**
-     * @brief Subtracts another Big integer from this Big integer
-     * @param num A big integer that is to be added
-     * @return A Big integer that is the result of the subtraction
+     * @brief The negation operation of the current big integer
      */
-    big_int sub(big_int &num);
+    void negate();
+
+    /**
+     * @brief Returns the string base 10 value of the big integer
+     * @return A string containing the base 10 value of the big integer
+     */
+    string print_decimal() const;
 
 private:
     // List containing all coefficients for the big number starting with least significant at index 0

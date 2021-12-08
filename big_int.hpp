@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdint>
 using namespace std;
 
 /**
@@ -126,6 +127,9 @@ private:
 
     // Type sign that indications the sign of the integer (positive or negative)
     sign integer_sign = sign::POSITIVE;
+
+    // Base value of the numbers stored in the vector, instead of base 10 it will be base 2^32
+    uint64_t base = UINT32_MAX + 1;
 
     /**
      * @brief Increases the number of coefficients for the Big Integers by adding leading zeros

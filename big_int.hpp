@@ -13,6 +13,15 @@
 using namespace std;
 
 /**
+ * @brief This class will be used to indicate whetHer a big_int is positive or negative
+ */
+enum class sign
+{
+    POSITIVE,
+    NEGATIVE
+};
+
+/**
  * @brief This class represents a big integer that can hold integers bigger than the maximum 64 bits and can do arbitrary precision integer arithmetic
  */
 class big_int

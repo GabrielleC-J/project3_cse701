@@ -87,6 +87,17 @@ int main()
 
     /*********************************** Run tests and Write output to log files ****************************************/
 
+    if (failed_counter == 0)
+    {
+        log << "All " << to_string(passed_counter) << " tests passed!!\n";
+    }
+    else
+    {
+        log << "Not all tests passed!\n"
+            << "Number of tests passed: " << to_string(passed_counter) << "\n"
+            << "Number of tests failed: " << to_string(failed_counter) << "\n";
+    }
+
     // Close log file and inform done writing
     log.close();
     cout << "Finished testing the big_int class, see the log file " << log_file << " for all the information.";

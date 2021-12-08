@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief
  * @version 0.1
- * @date Dec 5, 2021
+ * @date Dec 7, 2021
  */
 
 #include <iostream>
@@ -18,22 +18,31 @@ using namespace std;
 uint8_t passed_counter = 0;
 uint8_t failed_counter = 0;
 
-void check(bool condition)
+/**
+ * @brief Checks if each unit test passes or fails and writes output to log file
+ * @param condition bool indication true if test passed and false if test failed
+ * @param file file to write outcome of tests
+ */
+void check(bool condition, ofstream file)
 {
     if (condition)
     {
-        //Print "-> Passed"
+        file << " -> Passed\n";
+        passed_counter++;
     }
 
     else
     {
-        //Print to file "-> Failed"
+        file << " -> Failed\n";
+        failed_counter++;
     }
 }
 
+/********************************************* Test Functions **********************************************/
+
 int main()
 {
-    //open log file to contain testing results
+    /***************************************** Open Log File ********************************************/
     /* Referenced the following for filesystem class:
            https://en.cppreference.com/w/cpp/filesystem/path
            https://en.cppreference.com/w/cpp/filesystem/exists
@@ -67,7 +76,7 @@ int main()
     else
         cout << "Writing test logs to " << log_file << "\n";
 
-    // Run tests and Write output to log files
+    /*********************************** Run tests and Write output to log files ****************************************/
 
     // Close log file and inform done writing
     log.close();

@@ -19,3 +19,8 @@ The operations that can occur on "big_int"s in the library are:
 
 ## Constructors and Input
 
+## Testing of Library
+The file ***big_int_test.cpp*** contains all the unit tests for the `big_int` class.
+
+A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended too the end of the name until the file does not exist, thus not deleting any existing log files.
+

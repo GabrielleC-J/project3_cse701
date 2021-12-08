@@ -26,6 +26,36 @@ enum class sign
  */
 class big_int
 {
+    /**
+     * @brief A friend function that adds two big integers
+     * @param int_a The first big_int to be added
+     * @param int_b The second big_int to be added
+     * @return A big_int that represents the sum of the two big_ints added
+     */
+
+    friend big_int operator+(const big_int &int_a, const big_int &int_b);
+    /**
+     * @brief A friend function that subtracts two big integers
+     * @param int_a The first big_int to be subtracted from
+     * @param int_b The second big_int to subtract from the first
+     * @return A big_int that represents the result of the subtraction of the two big_ints
+     */
+    friend big_int operator-(const big_int &int_a, const big_int &int_b);
+
+    /**
+     * @brief A friend function that multiplies two big integers
+     * @param int_a The first big_int to be multiplied
+     * @param int_b The second big_int to be multiplied
+     * @return A big_int that represents the result of the two big_ints multiplied
+     */
+    friend big_int operator*(const big_int &int_a, const big_int &int_b);
+    /**
+     * @brief A friend function that divides two big integers
+     * @param int_a The big_int that is the dividend
+     * @param int_b The big_int that is the divisor
+     * @return A big_int that represents the result of the two big_ints divided
+     */
+    friend big_int operator/(const big_int &int_a, const big_int &int_b);
 
 public:
     /************************** Constructors ****************************/

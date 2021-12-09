@@ -43,24 +43,33 @@ big_int::big_int(const int64_t &integer)
             digit = radix_minus1 - digit;
         }
         // Add 1 to the big int and check carry
-        uint64_t carry = 0;
-        for (uint64_t &digit : coefficient)
-        {
-            uint64_t temp = digit + 1 + carry;
-            digit = temp & UINT32_MAX; // keep the low 32 bits
-            carry = temp >> 32;        // shift temp to the right by 32 bits to get the carry bit
-        }
-
-        // If the carry is not 0, need to add a new coefficient with the value of carry
-        if (carry != 0)
-        {
-            coefficient.push_back(carry);
-        }
+        add_32(1);
     }
 }
 
-big_int::big_int(const string &integer)
+big_int::big_int(const string &integer) : coefficient((1))
 {
+    string integer_temp = integer;
+    // Check to see if 1st digit is a "+" or "-" sign
+    if (integer[0] == '+')
+    {
+        integer_sign = sign::POSITIVE;
+        integer_temp.erase(0, 1);
+    }
+    else if (integer[0] == '-')
+    {
+        integer_sign = sign::NEGATIVE;
+        integer_temp.erase(0, 1);
+    }
+
+    // Check to make sure all the characters are digits from 1 to 9 **TODO
+
+    // For each digit character in the string multiply the big integer by 10 and then add the digit value
+    for (const char &digit : integer_temp)
+    {
+        multiply(10);
+        add_32(digit - '0'); // the character digit will have ascii value thus this value minus the value at 0 will give base 10 digit value
+    }
 }
 
 big_int::big_int(const big_int &big_integer)
@@ -79,6 +88,46 @@ big_int::big_int(const vector<uint32_t> &vec)
         coefficient.push_back(vec[i]);
     }
     coefficient.push_back(vec[0]);
+}
+
+/******************************* Private Functions ******************************/
+void big_int::multiply(const uint32_t &integer)
+{
+    uint64_t carry = 0;
+    for (uint64_t &digit : coefficient)
+    {
+        uint64_t temp = (digit * integer) + carry;
+        digit = temp & UINT32_MAX; //Keep the lower 32 bits as the value for the coefficient digit
+        carry = temp >> 32;        // Assign value of the carry by shifting temp value to the right by 32;
+    }
+
+    // Check to see if carry at the end is 0, if not add new coefficient to vector of coefficients
+    if (carry != 0)
+    {
+        coefficient.push_back(carry);
+    }
+}
+
+void big_int::add_32(const uint32_t &integer)
+{
+    // Add integer to only the very first coefficient (since the integer is only 32 bits)
+    uint32_t temp = coefficient[0] + integer;
+    coefficient[0] = temp & UINT32_MAX; // keep the low 32 bits
+    uint64_t carry = temp >> 32;        // shift temp to the right by 32 bits to get the carry bit
+
+    // Check if a carry exists and update next coefficient until carry = 0 or until the end of the coefficient vector
+    for (uint64_t i = 1; i < coefficient.size() && carry != 0; i++)
+    {
+        uint64_t temp = coefficient[i] + carry;
+        coefficient[i] = temp & UINT32_MAX; // keep the low 32 bits
+        carry = temp >> 32;                 // shift temp to the right by 32 bits to get the carry bit
+    }
+
+    // If the carry is not 0, need to add a new coefficient with the value of carry
+    if (carry != 0)
+    {
+        coefficient.push_back(carry);
+    }
 }
 
 /******************************* Public Functions ******************************/

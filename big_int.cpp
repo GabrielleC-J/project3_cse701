@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief
  * @version 0.1
- * @date Dec 8, 2021
+ * @date Dec 9, 2021
  */
 
 #include <iostream>
@@ -36,14 +36,7 @@ big_int::big_int(const int64_t &integer)
         integer_sign = sign::NEGATIVE;
 
         // set the integer to its radix complement
-        uint64_t radix_minus1 = base - 1;
-        // Find radix - 1 complement and then add 1 to get radix complement
-        for (uint64_t &digit : coefficient)
-        {
-            digit = radix_minus1 - digit;
-        }
-        // Add 1 to the big int and check carry
-        add_32(1);
+        radix_complement();
     }
 }
 
@@ -70,6 +63,12 @@ big_int::big_int(const string &integer) : coefficient((1))
         multiply(10);
         add_32(digit - '0'); // the character digit will have ascii value thus this value minus the value at 0 will give base 10 digit value
     }
+
+    // If negative store integer as its radix complement
+    if (integer_sign == sign::NEGATIVE)
+    {
+        radix_complement();
+    }
 }
 
 big_int::big_int(const big_int &big_integer)
@@ -88,6 +87,24 @@ big_int::big_int(const vector<uint32_t> &vec)
         coefficient.push_back(vec[i]);
     }
     coefficient.push_back(vec[0]);
+}
+
+/******************************** Public Functions ******************************/
+
+void big_int::negate()
+{
+    // Change sign flag
+    if (integer_sign == sign::POSITIVE)
+    {
+        integer_sign = sign::NEGATIVE;
+    }
+    else
+    {
+        integer_sign = sign::POSITIVE;
+    }
+
+    // Change vector of coefficients to the radix complement
+    radix_complement();
 }
 
 /******************************* Private Functions ******************************/
@@ -128,6 +145,21 @@ void big_int::add_32(const uint32_t &integer)
     {
         coefficient.push_back(carry);
     }
+}
+
+void big_int::radix_complement()
+{
+    // Ged the radix - 1
+    uint64_t radix_minus1 = base - 1;
+
+    // Find radix - 1 complement and then add 1 to get radix complement
+    for (uint64_t &digit : coefficient)
+    {
+        digit = radix_minus1 - digit;
+    }
+
+    // Add 1 to the big int and check carry
+    add_32(1);
 }
 
 /******************************* Public Functions ******************************/

@@ -141,6 +141,18 @@ private:
      * @brief Removes all leading 0 coefficients for the big number
      */
     void shrink();
+
+    /**
+     * @brief Multiplies an unsigned 32 bit integer to the current big number
+     * @param integer a 32bit integer
+     */
+    void multiply(const uint32_t &integer);
+
+    /**
+     * @brief Adds an unsigned 32 bit integer to the current big number
+     * @param integer a 32 bit integer
+     */
+    void add_32(const uint32_t &integer);
 };
 
 /************************* Operator Overloads ***********************/

@@ -15,12 +15,15 @@ using namespace std;
 /******************************* Constructors ******************************/
 big_int::big_int() : coefficient({0}){};
 
-big_int::big_int(const uint64_t &size) : coefficient((size)){};
-
 big_int::big_int(const int64_t &integer)
 {
     // Add the coefficients/digits for the integer in base 2^32
     uint64_t value = integer;
+    // If value is negative save as a positive as will apply radix complement later
+    if (integer < 0)
+    {
+        value = -integer;
+    }
     uint64_t remainder = value % base;
     coefficient.push_back(remainder);
     while (value > base)
@@ -107,6 +110,21 @@ void big_int::negate()
     radix_complement();
 }
 
+const uint64_t &big_int::at(const uint64_t &index) const
+{
+    return coefficient.at(index);
+}
+
+uint64_t big_int::coefficient_size()
+{
+    //First if there are more than 1 coefficient need to shrink, in case there are extra 0 coefficients **TODO**
+    return coefficient.size();
+}
+
+const sign &big_int::get_sign() const
+{
+    return integer_sign;
+}
 /******************************* Private Functions ******************************/
 void big_int::multiply(const uint32_t &integer)
 {
@@ -114,8 +132,8 @@ void big_int::multiply(const uint32_t &integer)
     for (uint64_t &digit : coefficient)
     {
         uint64_t temp = (digit * integer) + carry;
-        digit = temp & UINT32_MAX; //Keep the lower 32 bits as the value for the coefficient digit
-        carry = temp >> 32;        // Assign value of the carry by shifting temp value to the right by 32;
+        digit = temp & (uint64_t)UINT32_MAX; //Keep the lower 32 bits as the value for the coefficient digit
+        carry = temp >> 32;                  // Assign value of the carry by shifting temp value to the right by 32;
     }
 
     // Check to see if carry at the end is 0, if not add new coefficient to vector of coefficients
@@ -128,16 +146,16 @@ void big_int::multiply(const uint32_t &integer)
 void big_int::add_32(const uint32_t &integer)
 {
     // Add integer to only the very first coefficient (since the integer is only 32 bits)
-    uint32_t temp = coefficient[0] + integer;
-    coefficient[0] = temp & UINT32_MAX; // keep the low 32 bits
-    uint64_t carry = temp >> 32;        // shift temp to the right by 32 bits to get the carry bit
+    uint64_t temp = coefficient[0] + integer;
+    coefficient[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
+    uint64_t carry = temp >> 32;                  // shift temp to the right by 32 bits to get the carry bit
 
     // Check if a carry exists and update next coefficient until carry = 0 or until the end of the coefficient vector
     for (uint64_t i = 1; i < coefficient.size() && carry != 0; i++)
     {
         uint64_t temp = coefficient[i] + carry;
-        coefficient[i] = temp & UINT32_MAX; // keep the low 32 bits
-        carry = temp >> 32;                 // shift temp to the right by 32 bits to get the carry bit
+        coefficient[i] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
+        carry = temp >> 32;                           // shift temp to the right by 32 bits to get the carry bit
     }
 
     // If the carry is not 0, need to add a new coefficient with the value of carry

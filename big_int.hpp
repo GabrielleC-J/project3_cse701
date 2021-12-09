@@ -4,7 +4,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
  * @version 0.1
- * @date Dec 8, 2021
+ * @date Dec 9, 2021
  */
 
 #include <iostream>
@@ -27,6 +27,7 @@ enum class sign
  */
 class big_int
 {
+    /*************************** Friend Functions ************************/
     /**
      * @brief A friend function that adds two big integers
      * @param int_a The first big_int to be added
@@ -64,12 +65,6 @@ public:
      * @brief Initialize a big integer with value 0
      */
     big_int();
-
-    /**
-     * @brief Initialize a big integer with value 0
-     * @param size the number of coefficients for the Big Integer
-     */
-    big_int(const uint64_t &size);
 
     /**
      * @brief Initialize a big integer from a 64 bit decimal integer (ie base 10)
@@ -121,6 +116,26 @@ public:
      */
     string print_decimal() const;
 
+    /**
+     * @brief Checks if index is in range and gets coefficient at index
+     * @details Retrieves the coefficient at specified index and throws out_of_range error
+     *          via vector vector::at()
+     * @param index the index to find the coefficient at
+     */
+    const uint64_t &at(const uint64_t &index) const;
+
+    /**
+     * @brief Gets the number of coefficients in the big integer
+     * @return an integer indicating the number of coefficients in the big integer
+     */
+    uint64_t coefficient_size();
+
+    /**
+     * @brief Retrieves the sign of the integer, either positive or negative (zero will have a positive sign)
+     * @return A sign object indicating the sign
+     */
+    const sign &get_sign() const;
+
 private:
     // List containing all coefficients for the big number starting with least significant at index 0
     vector<uint64_t> coefficient;
@@ -129,7 +144,7 @@ private:
     sign integer_sign = sign::POSITIVE;
 
     // Base value of the numbers stored in the vector, instead of base 10 it will be base 2^32
-    uint64_t base = UINT32_MAX + 1;
+    uint64_t base = (uint64_t)UINT32_MAX + 1; //4294967296;
 
     /**
      * @brief Increases the number of coefficients for the Big Integers by adding leading zeros
@@ -153,6 +168,12 @@ private:
      * @param integer a 32 bit integer
      */
     void add_32(const uint32_t &integer);
+
+    /**
+     * @brief Changes the big integer to its radix complement where the radix is 2^32
+     * @details Since negative numbers will be stored as their radix complement, this method will be used to help the conversion
+     */
+    void radix_complement();
 };
 
 /************************* Operator Overloads ***********************/

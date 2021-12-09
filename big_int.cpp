@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief
  * @version 0.1
- * @date Dec 5, 2021
+ * @date Dec 8, 2021
  */
 
 #include <iostream>
@@ -12,6 +12,7 @@
 #include "big_int.hpp"
 using namespace std;
 
+/******************************* Constructors ******************************/
 big_int::big_int() : coefficient({0}){};
 
 big_int::big_int(const uint64_t &size) : coefficient((size)){};
@@ -42,7 +43,7 @@ big_int::big_int(const int64_t &integer)
             digit = radix_minus1 - digit;
         }
         // Add 1 to the big int and check carry
-        uint8_t carry = 0;
+        uint64_t carry = 0;
         for (uint64_t &digit : coefficient)
         {
             uint64_t temp = digit + 1 + carry;
@@ -58,6 +59,18 @@ big_int::big_int(const int64_t &integer)
     }
 }
 
+big_int::big_int(const string &integer)
+{
+}
+
+big_int::big_int(const big_int &big_integer)
+{
+    for (const uint64_t &digits : big_integer.coefficient) // Don't think this is allowed because object is accessing private var
+    {
+        coefficient.push_back(digits);
+    }
+}
+
 big_int::big_int(const vector<uint32_t> &vec)
 {
     coefficient.reserve(vec.size());
@@ -68,6 +81,7 @@ big_int::big_int(const vector<uint32_t> &vec)
     coefficient.push_back(vec[0]);
 }
 
+/******************************* Public Functions ******************************/
 /* big_int::add(const big_int &num)
 {
     //Check to make sure the big integers have the same number of coefficients

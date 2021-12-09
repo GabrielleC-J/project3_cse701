@@ -17,6 +17,8 @@ The operations that can occur on "big_int"s in the library are:
 * multiplication
 * division
 
+## Data Structure and Base 
+
 ## Constructors and Input
 
 ## Testing of Library

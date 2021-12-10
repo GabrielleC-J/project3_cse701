@@ -91,8 +91,8 @@ void check_constructors(ofstream &file)
     big_int neg_int(-256);
     check(neg_int.get_sign() == sign::NEGATIVE, file);
 
-    file << "Negative integer value check coefficients for 2^32 complement ...";
-    check(neg_int.at(0) == 4294967040 && neg_int.coefficient_size() == 1, file);
+    file << "Negative integer value, check coefficients to be value as if integer was positive ...";
+    check(neg_int.at(0) == 256 && neg_int.coefficient_size() == 1, file);
 
     // Check constructor with base 10 string argument
     file << "\nBase 10 string argument constructor checks:\n";
@@ -108,8 +108,8 @@ void check_constructors(ofstream &file)
     big_int neg_string_int("-256");
     check(neg_string_int.get_sign() == sign::NEGATIVE, file);
 
-    file << "Check negative string, that coefficients are the 2^32's complement";
-    check(neg_string_int.at(0) == 4294967040 && neg_string_int.coefficient_size() == 1, file);
+    file << "Check negative string, that coefficients are values as if number was positive";
+    check(neg_string_int.at(0) == 256 && neg_string_int.coefficient_size() == 1, file);
 }
 
 int main()

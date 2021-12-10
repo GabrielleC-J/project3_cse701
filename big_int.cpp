@@ -115,7 +115,7 @@ const uint64_t &big_int::at(const uint64_t &index) const
     return coefficient.at(index);
 }
 
-uint64_t big_int::coefficient_size()
+uint64_t big_int::coefficient_size() const
 {
     //First if there are more than 1 coefficient need to shrink, in case there are extra 0 coefficients **TODO**
     return coefficient.size();
@@ -180,7 +180,66 @@ void big_int::radix_complement()
     add_32(1);
 }
 
-/******************************* Public Functions ******************************/
+void big_int::expand(uint64_t const &num_zeros)
+{
+    for (uint64_t i = 0; i < num_zeros; i++)
+    {
+        coefficient.push_back(0);
+    }
+}
+
+void shrink()
+{
+    // need to check to make sure that if there is only 1 coefficient that is 0, it is not deleted.
+}
+
+/******************************* Friend Functions ******************************/
+
+big_int operator+(const big_int &int_a, const big_int &int_b)
+{
+    big_int sum;
+    // Update very 1st coefficient with the sum
+    uint64_t temp = int_a.coefficient[0] + int_b.coefficient[0];
+    sum.coefficient[0] = temp & (uint64_t)UINT32_MAX;
+    uint64_t carry = temp >> 32;
+
+    //For the rest of the coefficients add them and then carry (until the end of smallest coefficient vector)
+    for (uint64_t i = 1; i < int_a.coefficient_size() || i < int_b.coefficient_size(); i++)
+    {
+        temp = int_a.coefficient[i] + int_b.coefficient[i] + carry;
+        sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+        carry = temp >> 32;
+    }
+
+    // if the coefficient vectors of int_a and int_b are not the same, add the extra coefficients plus the carry to the new big int
+    if (int_a.coefficient_size() < int_b.coefficient_size())
+    {
+        for (uint64_t i = int_a.coefficient_size(); i < int_b.coefficient_size(); i++)
+        {
+            temp = int_b.coefficient[i] + carry;
+            sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+            carry = temp >> 32;
+        }
+    }
+    else if (int_b.coefficient_size() < int_a.coefficient_size())
+    {
+        for (uint64_t i = int_b.coefficient_size(); i < int_a.coefficient_size(); i++)
+        {
+            temp = int_a.coefficient[i] + carry;
+            sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+            carry = temp >> 32;
+        }
+    }
+
+    if (carry != 0)
+    {
+        sum.coefficient.push_back(carry);
+    }
+    // Need to update if a or b are only negative then new bit int must be negative
+
+    return sum;
+}
+
 /* big_int::add(const big_int &num)
 {
     //Check to make sure the big integers have the same number of coefficients

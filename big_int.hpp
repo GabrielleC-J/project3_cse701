@@ -34,8 +34,8 @@ class big_int
      * @param int_b The second big_int to be added
      * @return A big_int that represents the sum of the two big_ints added
      */
-
     friend big_int operator+(const big_int &int_a, const big_int &int_b);
+
     /**
      * @brief A friend function that subtracts two big integers
      * @param int_a The first big_int to be subtracted from
@@ -174,7 +174,7 @@ private:
      * @details This will be used for addition
      * @return a vector of unsigned 64 bit integers representing the radix complement of the big int
      */
-    vector<uint64_t> radix_complement();
+    vector<uint64_t> radix_complement() const;
 };
 
 /************************* Operator Overloads ***********************/
@@ -184,3 +184,21 @@ private:
  * @return an ostream
  */
 ostream &operator<<(ostream &out, const big_int &num);
+
+/************************** Helper Functions and other Operator Overloads *************************/
+
+/**
+ * @brief A friend function that negates a big integer
+ * @param int_a The big_int to be negated
+ * @return A big_int that represents the result 
+ */
+big_int operator-(const big_int &int_a);
+
+/**
+ * @brief Adds two vectors element by element and incorporates the carry as if adding two big integers
+ * @details Helper function function for the + operator overload
+ * @param vec1 Vector of coefficients
+ * @param vec2 Vector of coefficients
+ * @return a vector of 64 bit integers representing the sum of the two vectors
+ */
+vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2);

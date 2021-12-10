@@ -170,10 +170,11 @@ private:
     void add_32(const uint32_t &integer);
 
     /**
-     * @brief Changes the big integer to its radix complement where the radix is 2^32
-     * @details Since negative numbers will be stored as their radix complement, this method will be used to help the conversion
+     * @brief Finds the radix complement of the big integer where the radix is 2^32
+     * @details This will be used for addition
+     * @return a vector of unsigned 64 bit integers representing the radix complement of the big int
      */
-    void radix_complement();
+    vector<uint64_t> radix_complement();
 };
 
 /************************* Operator Overloads ***********************/

@@ -19,9 +19,10 @@ big_int::big_int(const int64_t &integer)
 {
     // Add the coefficients/digits for the integer in base 2^32
     uint64_t value = integer;
-    // If value is negative save as a positive as will apply radix complement later
+    // If value is negative save as a positive and update sign
     if (integer < 0)
     {
+        integer_sign = sign::NEGATIVE;
         value = -integer;
     }
     uint64_t remainder = value % base;
@@ -32,21 +33,12 @@ big_int::big_int(const int64_t &integer)
         remainder = value % base;
         coefficient.push_back(remainder);
     }
-
-    // Find out if integer is positive or negative
-    if (integer < 0)
-    {
-        integer_sign = sign::NEGATIVE;
-
-        // set the integer to its radix complement
-        radix_complement();
-    }
 }
 
 big_int::big_int(const string &integer) : coefficient((1))
 {
     string integer_temp = integer;
-    // Check to see if 1st digit is a "+" or "-" sign
+    // Check to see if 1st digit is a "+" or "-" sign and remove
     if (integer[0] == '+')
     {
         integer_sign = sign::POSITIVE;
@@ -65,12 +57,6 @@ big_int::big_int(const string &integer) : coefficient((1))
     {
         multiply(10);
         add_32(digit - '0'); // the character digit will have ascii value thus this value minus the value at 0 will give base 10 digit value
-    }
-
-    // If negative store integer as its radix complement
-    if (integer_sign == sign::NEGATIVE)
-    {
-        radix_complement();
     }
 }
 
@@ -105,9 +91,6 @@ void big_int::negate()
     {
         integer_sign = sign::POSITIVE;
     }
-
-    // Change vector of coefficients to the radix complement
-    radix_complement();
 }
 
 const uint64_t &big_int::at(const uint64_t &index) const
@@ -165,19 +148,38 @@ void big_int::add_32(const uint32_t &integer)
     }
 }
 
-void big_int::radix_complement()
+vector<uint64_t> big_int::radix_complement()
 {
+    vector<uint64_t> complement;
     // Ged the radix - 1
     uint64_t radix_minus1 = base - 1;
 
     // Find radix - 1 complement and then add 1 to get radix complement
     for (uint64_t &digit : coefficient)
     {
-        digit = radix_minus1 - digit;
+        complement.push_back(radix_minus1 - digit);
     }
 
     // Add 1 to the big int and check carry
-    add_32(1);
+    uint64_t temp = complement[0] + 1;
+    complement[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
+    uint64_t carry = temp >> 32;
+
+    // If a carry exists add it to the next element in vector if it exist
+    for (uint64_t i = 1; i < complement.size() && carry != 0; i++)
+    {
+        uint64_t temp = complement[i] + carry;
+        complement[i] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
+        carry = temp >> 32;                          // shift temp to the right by 32 bits to get the carry bit
+    }
+
+    // If the carry is not 0, need to add a new element with the value of carry
+    if (carry != 0)
+    {
+        complement.push_back(carry);
+    }
+
+    return complement;
 }
 
 void big_int::expand(uint64_t const &num_zeros)

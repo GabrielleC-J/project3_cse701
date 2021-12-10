@@ -148,14 +148,14 @@ void big_int::add_32(const uint32_t &integer)
     }
 }
 
-vector<uint64_t> big_int::radix_complement()
+vector<uint64_t> big_int::radix_complement() const
 {
     vector<uint64_t> complement;
     // Ged the radix - 1
     uint64_t radix_minus1 = base - 1;
 
     // Find radix - 1 complement and then add 1 to get radix complement
-    for (uint64_t &digit : coefficient)
+    for (const uint64_t &digit : coefficient)
     {
         complement.push_back(radix_minus1 - digit);
     }
@@ -190,9 +190,24 @@ void big_int::expand(uint64_t const &num_zeros)
     }
 }
 
-void shrink()
+void big_int::shrink()
 {
-    // need to check to make sure that if there is only 1 coefficient that is 0, it is not deleted.
+
+    if (coefficient.size() > 1)
+    {
+        bool number_reached = false;
+        for (int i = coefficient.size() - 1; i > 0 && !number_reached; i--)
+        {
+            if (coefficient[i] == 0)
+            {
+                coefficient.erase(coefficient.begin() + i);
+            }
+            else
+            {
+                number_reached = true;
+            }
+        }
+    }
 }
 
 /******************************* Friend Functions ******************************/
@@ -200,44 +215,115 @@ void shrink()
 big_int operator+(const big_int &int_a, const big_int &int_b)
 {
     big_int sum;
-    // Update very 1st coefficient with the sum
-    uint64_t temp = int_a.coefficient[0] + int_b.coefficient[0];
-    sum.coefficient[0] = temp & (uint64_t)UINT32_MAX;
-    uint64_t carry = temp >> 32;
+    if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign ::NEGATIVE)
+    {
+        // add the two radix complements
+        sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.radix_complement());
+
+        // Change the sign of sum big int to negative
+        sum.integer_sign == sign::NEGATIVE;
+    }
+    else if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
+    {
+        // add radix of a and b coefficient
+        sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.coefficient);
+
+        // update sum big int sign to negative if int_a is a bigger value
+        if (int_a.coefficient_size() > int_b.coefficient_size())
+        {
+            sum.integer_sign = sign::NEGATIVE;
+        }
+        else if (int_a.coefficient_size() == int_b.coefficient_size())
+        {
+            uint64_t size = int_a.coefficient_size();
+            if (int_a.coefficient[size] > int_b.coefficient[size])
+            {
+                sum.integer_sign = sign::NEGATIVE;
+            }
+        }
+    }
+    else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign ::NEGATIVE)
+    {
+        // add a coefficient and radix of b
+        sum.coefficient = add_coefficients(int_a.coefficient, int_b.radix_complement());
+
+        // update sum big int sign to negative if int_b is a bigger value
+        if (int_a.coefficient_size() < int_b.coefficient_size())
+        {
+            sum.integer_sign = sign::NEGATIVE;
+        }
+        else if (int_a.coefficient_size() == int_b.coefficient_size())
+        {
+            uint64_t size = int_a.coefficient_size();
+            if (int_a.coefficient[size] < int_b.coefficient[size])
+            {
+                sum.integer_sign = sign::NEGATIVE;
+            }
+        }
+    }
+    else
+    {
+        // add the coefficients of both a and b, no need to change sign of sum
+        sum.coefficient = add_coefficients(int_a.coefficient, int_b.coefficient);
+    }
+
+    return sum;
+}
+
+big_int operator-(const big_int &int_a, const big_int &int_b)
+{
+    return int_a + (-int_b);
+}
+
+/************************** Helper Functions and other Operator Overloads *************************/
+big_int operator-(const big_int &int_a)
+{
+    big_int negation(int_a);
+    negation.negate();
+    return negation;
+}
+
+vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2)
+{
+    vector<uint64_t> sum;
+    uint64_t vec1_size = vec1.size();
+    uint64_t vec2_size = vec2.size();
+    uint64_t carry = 0;
+    uint64_t temp = 0;
 
     //For the rest of the coefficients add them and then carry (until the end of smallest coefficient vector)
-    for (uint64_t i = 1; i < int_a.coefficient_size() || i < int_b.coefficient_size(); i++)
+    for (uint64_t i = 0; i < vec1_size || i < vec2_size; i++)
     {
-        temp = int_a.coefficient[i] + int_b.coefficient[i] + carry;
-        sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+        temp = vec1[i] + vec2[i] + carry;
+        sum.push_back(temp & (uint64_t)UINT32_MAX);
         carry = temp >> 32;
     }
 
     // if the coefficient vectors of int_a and int_b are not the same, add the extra coefficients plus the carry to the new big int
-    if (int_a.coefficient_size() < int_b.coefficient_size())
+    if (vec1_size < vec2_size)
     {
-        for (uint64_t i = int_a.coefficient_size(); i < int_b.coefficient_size(); i++)
+        for (uint64_t i = vec1_size; i < vec2_size; i++)
         {
-            temp = int_b.coefficient[i] + carry;
-            sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+            temp = vec2[i] + carry;
+            sum.push_back(temp & (uint64_t)UINT32_MAX);
             carry = temp >> 32;
         }
     }
-    else if (int_b.coefficient_size() < int_a.coefficient_size())
+    else if (vec2_size < vec1_size)
     {
-        for (uint64_t i = int_b.coefficient_size(); i < int_a.coefficient_size(); i++)
+        for (uint64_t i = vec2_size; i < vec1_size; i++)
         {
-            temp = int_a.coefficient[i] + carry;
-            sum.coefficient.push_back(temp & (uint64_t)UINT32_MAX);
+            temp = vec1[i] + carry;
+            sum.push_back(temp & (uint64_t)UINT32_MAX);
             carry = temp >> 32;
         }
     }
 
+    // Check to see if there is a carry left over
     if (carry != 0)
     {
-        sum.coefficient.push_back(carry);
+        sum.push_back(carry);
     }
-    // Need to update if a or b are only negative then new bit int must be negative
 
     return sum;
 }

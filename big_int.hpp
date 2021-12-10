@@ -128,7 +128,7 @@ public:
      * @brief Gets the number of coefficients in the big integer
      * @return an integer indicating the number of coefficients in the big integer
      */
-    uint64_t coefficient_size();
+    uint64_t coefficient_size() const;
 
     /**
      * @brief Retrieves the sign of the integer, either positive or negative (zero will have a positive sign)
@@ -148,9 +148,9 @@ private:
 
     /**
      * @brief Increases the number of coefficients for the Big Integers by adding leading zeros
-     * @param num_zeros The number of leading zeros to add
+     * @param num_zeros The number of leading zer0 coefficients to add
      */
-    void expand(uint32_t const &num_zeros);
+    void expand(uint64_t const &num_zeros);
 
     /**
      * @brief Removes all leading 0 coefficients for the big number

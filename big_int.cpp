@@ -275,6 +275,49 @@ big_int operator-(const big_int &int_a, const big_int &int_b)
     return int_a + (-int_b);
 }
 
+big_int operator*(const big_int &int_a, const big_int &int_b)
+{
+    big_int product;
+
+    // multiply each coefficient/digit of the multiplier (int_b) by each coefficient of the multiplicand (int_a)
+    for (uint64_t i = 0; i < int_a.coefficient_size(); i++)
+    {
+        uint64_t carry = 0;
+        // multiply digit of int_a by each digit of int_b and add to the product big_int at index (i+j) if it exists
+        for (uint64_t j = 0; j < int_b.coefficient_size() && (i + j) < product.coefficient_size(); j++)
+        {
+            uint64_t temp = (int_a.coefficient[i] * int_b.coefficient[j]) + carry + product.coefficient[i + j];
+            product.coefficient[i + j] = temp & (uint64_t)(UINT32_MAX);
+            carry = temp >> 32;
+        }
+        // if the product big int coefficient vector is not long enough start adding new coefficients with the value product + carry
+        for (uint64_t k = product.coefficient_size(); k < int_b.coefficient_size(); k++)
+        {
+            uint64_t temp = (int_a.coefficient[i] * int_b.coefficient[k]) + carry;
+            product.coefficient.push_back(temp & (uint64_t)(UINT32_MAX));
+            carry = temp >> 32;
+        }
+
+        //add new coefficient with carry if any
+        if (carry != 0)
+        {
+            product.coefficient.push_back(carry);
+        }
+    }
+
+    // update the sign of the product big_int if only one of the two integers multiplied are negative
+    if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
+    {
+        product.integer_sign = sign::NEGATIVE;
+    }
+    else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign ::NEGATIVE)
+    {
+        product.integer_sign = sign::NEGATIVE;
+    }
+
+    return product;
+}
+
 /************************** Helper Functions and other Operator Overloads *************************/
 big_int operator-(const big_int &int_a)
 {

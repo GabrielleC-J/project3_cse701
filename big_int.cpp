@@ -39,7 +39,7 @@ big_int::big_int(const int64_t &integer)
 big_int::big_int(const string &integer) : coefficient((1))
 {
     string integer_temp = integer;
-    // Check to see if 1st digit is a "+" or "-" sign and remove
+    // Check to see if 1st digit is a "+" or "-" sign and remove **Thoughts: maybe shouldn't erase and should just use a substring instead of copying in the beginning **
     if (integer[0] == '+')
     {
         integer_sign = sign::POSITIVE;
@@ -60,7 +60,7 @@ big_int::big_int(const string &integer) : coefficient((1))
             throw invalid_string_integer();
         }
 
-        multiply(10);
+        multiply_32(10);
         add_32(digit - '0'); // the character digit will have ascii value thus this value minus the value at 0 will give base 10 digit value
     }
 }

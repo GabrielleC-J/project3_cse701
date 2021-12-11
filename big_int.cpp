@@ -161,7 +161,7 @@ void big_int::divide_32(const uint32_t &integer)
 {
 
     uint64_t remainder = 0;
-    for (uint32_t i = coefficient.size() - 1; i >= 0; i++)
+    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed
     {
         uint64_t temp = base * remainder + coefficient[i];
         coefficient[i] = temp / integer;
@@ -172,7 +172,7 @@ void big_int::divide_32(const uint32_t &integer)
 uint64_t big_int::remainder_32(const uint32_t &integer) const
 {
     uint64_t remainder = 0;
-    for (uint32_t i = coefficient.size() - 1; i >= 0; i++)
+    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed
     {
         uint64_t temp = base * remainder + coefficient[i];
         remainder = temp % integer;
@@ -367,7 +367,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
     big_int quotient;
     uint64_t dividend_size = dividend.coefficient_size();
     uint64_t divisor_size = divisor.coefficient_size();
-    if (dividend_size < dividend_size)
+    if (dividend_size < divisor_size)
     {
         return quotient;
     }

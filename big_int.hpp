@@ -57,7 +57,7 @@ class big_int
      * @param int_b The big_int that is the divisor
      * @return A big_int that represents the result of the two big_ints divided
      */
-    friend big_int operator/(const big_int &int_a, const big_int &int_b);
+    friend big_int operator/(const big_int &dividend, const big_int &divisor);
 
 public:
     /************************** Constructors ****************************/
@@ -175,6 +175,25 @@ private:
      * @return a vector of unsigned 64 bit integers representing the radix complement of the big int
      */
     vector<uint64_t> radix_complement() const;
+};
+
+/***************************** Exceptions ***************************/
+/**
+ * @brief Exception to be thrown if the base 10 integer input string contains a character that is not a number or a +/- in the beginning
+ */
+class invalid_string_integer : public invalid_argument
+{
+public:
+    invalid_string_integer() : invalid_argument("Invalid character found. The integer string inputted for the big_int can not have any other characters but numbers and a + or - sign in the beginning"){};
+};
+
+/**
+ * @brief Exception to be thrown in dividing by zero
+ */
+class division_by_zero : public invalid_argument
+{
+public:
+    division_by_zero() : invalid_argument("Cannot divide a big integer by zero");
 };
 
 /************************* Operator Overloads ***********************/

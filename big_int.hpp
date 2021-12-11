@@ -178,8 +178,9 @@ private:
     /**
      * @brief Finds the remainder of the currend big int divided by an unsigned 32 bit integer
      * @param integer a 32 bit integer
+     * @return integer indicating the remainder
      */
-    void remainder_32(const uint32_t &integer);
+    uint64_t remainder_32(const uint32_t &integer) const;
 
     /**
      * @brief Finds the radix complement of the big integer where the radix is 2^32

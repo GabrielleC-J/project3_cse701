@@ -64,18 +64,23 @@ void printline(string line, ofstream file)
 /********************************************* Test Functions **********************************************/
 
 /**
- * @brief Tests to check all constructors
+ * @brief Tests to check the default constructor and the copy constructor
  */
-void check_constructors(ofstream &file)
+void check_other_constructors(ofstream &file)
 {
-
-    file << "***********Testing all constructors of the big_int class:***********\n";
-
     // Check the zero constructor
     file << "Default constructor check, big int set to zero ...";
     big_int zero_default;
     check(zero_default.at(0) == 0 && zero_default.coefficient_size() == 1, file);
 
+    // Check copy constructor
+}
+
+/**
+ * @brief Tests to check the constructor with an integer argument
+ */
+void check_integer_constructor(ofstream &file)
+{
     // Check constructor with an integer argument
     file << "\nConstructor checks with Integer argument:\n";
 
@@ -93,7 +98,13 @@ void check_constructors(ofstream &file)
 
     file << "Negative integer value, check coefficients to be value as if integer was positive ...";
     check(neg_int.at(0) == 256 && neg_int.coefficient_size() == 1, file);
+}
 
+/**
+ * @brief Tests to check the constructor with a string argument
+ */
+void check_string_constructor(ofstream &file)
+{
     // Check constructor with base 10 string argument
     file << "\nBase 10 string argument constructor checks:\n";
 
@@ -108,8 +119,34 @@ void check_constructors(ofstream &file)
     big_int neg_string_int("-256");
     check(neg_string_int.get_sign() == sign::NEGATIVE, file);
 
-    file << "Check negative string, that coefficients are values as if number was positive";
+    file << "Check negative string, that coefficients are values as if number was positive ...";
     check(neg_string_int.at(0) == 256 && neg_string_int.coefficient_size() == 1, file);
+
+    file << "Check invalid input of the string argument ...\n"; /**TODO**/
+}
+
+/**
+ * @brief Tests to the addition function of a big integer
+ */
+void check_addition(ofstream &file)
+{
+    big_int number1(45);
+    big_int number2(-256);
+    big_int sum = number1 + number2;
+    check(sum.at(0) == 211 && sum.get_sign() == sign::NEGATIVE, file);
+}
+
+void check_subtraction_negation(ofstream &file)
+{
+    big_int positive(45);
+    big_int positive2(256);
+    big_int negative = -positive;
+    file << "Checking the negation operator overload ...";
+    check(negative.get_sign() == sign::NEGATIVE && negative.at(0) == 45, file);
+
+    file << "Checking subtraction of 2 positive numbers with the 2nd being bigger ...";
+    big_int sub = positive - positive2;
+    check(sub.at(0) == 211 && sub.get_sign() == sign::NEGATIVE, file);
 }
 
 int main()
@@ -149,8 +186,23 @@ int main()
         cout << "Writing test logs to " << log_file << "\n";
 
     /*********************************** Run tests and Write output to log files ****************************************/
-    check_constructors(log);
+    log << "***********Testing all constructors of the big_int class:***********\n";
+    check_other_constructors(log);
+    check_integer_constructor(log);
+    check_string_constructor(log);
     number_tests_passed(log);
+
+    log << "\n***********Testing printing to a string of the big_int class:***********\n";
+
+    log << "\n***********Testing addition of the big_int class:***********\n";
+    check_addition(log);
+
+    log << "\n***********Testing subtraction and negation of the big_int class:***********\n";
+    check_subtraction_negation(log);
+
+    log << "\n***********Testing multiplication of the big_int class:***********\n";
+
+    log << "\n***********Testing division of the big_int class:***********\n";
 
     if (failed_counter == 0)
     {

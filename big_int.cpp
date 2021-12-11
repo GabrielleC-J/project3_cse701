@@ -50,11 +50,15 @@ big_int::big_int(const string &integer) : coefficient((1))
         integer_temp.erase(0, 1);
     }
 
-    // Check to make sure all the characters are digits from 1 to 9 **TODO
-
     // For each digit character in the string multiply the big integer by 10 and then add the digit value
     for (const char &digit : integer_temp)
     {
+        // First check to make sure digit is from 0 to 9
+        if (isdigit(digit) == 0)
+        {
+            throw invalid_string_integer();
+        }
+
         multiply(10);
         add_32(digit - '0'); // the character digit will have ascii value thus this value minus the value at 0 will give base 10 digit value
     }
@@ -327,6 +331,10 @@ big_int operator*(const big_int &int_a, const big_int &int_b)
 big_int operator/(const big_int &dividend, const big_int &divisor)
 {
     // check for division by zero and throw exception
+    if (divisor.at(0) == 0 && divisor.coefficient_size() == 1)
+    {
+        throw division_by_zero();
+    }
 
     big_int quotient;
     uint64_t dividend_size = dividend.coefficient_size();

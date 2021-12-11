@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <sstream>
 #include "big_int.hpp"
 using namespace std;
 
@@ -97,6 +98,33 @@ void big_int::negate()
     }
 }
 
+// Referenced: https://www.cplusplus.com/reference/algorithm/reverse/
+string big_int::print_decimal() const
+{
+    string base10;
+    big_int copy; //copy of current big int **TODO**
+
+    do
+    {
+        base10.push_back(copy.remainder_32(10));
+        copy.divide_32(10);
+    } while (coefficient[0] != 0 && coefficient.size() != 1);
+
+    // add sign of big integer to string
+    if (integer_sign == sign::POSITIVE)
+    {
+        base10.push_back('+');
+    }
+    else
+    {
+        base10.push_back('-');
+    }
+
+    reverse(base10.begin(), base10.end());
+
+    return base10;
+}
+
 const uint64_t &big_int::at(const uint64_t &index) const
 {
     return coefficient.at(index);
@@ -150,6 +178,29 @@ void big_int::add_32(const uint32_t &integer)
     {
         coefficient.push_back(carry);
     }
+}
+
+void big_int::divide_32(const uint32_t &integer)
+{
+
+    uint64_t remainder = 0;
+    for (uint32_t i = coefficient.size() - 1; i >= 0; i++)
+    {
+        uint64_t temp = base * remainder + coefficient[i];
+        coefficient[i] = temp / integer;
+        remainder = temp % integer;
+    }
+}
+
+uint64_t big_int::remainder_32(const uint32_t &integer) const
+{
+    uint64_t remainder = 0;
+    for (uint32_t i = coefficient.size() - 1; i >= 0; i++)
+    {
+        uint64_t temp = base * remainder + coefficient[i];
+        remainder = temp % integer;
+    }
+    return remainder;
 }
 
 vector<uint64_t> big_int::radix_complement() const

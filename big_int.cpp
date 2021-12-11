@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief
  * @version 0.1
- * @date Dec 9, 2021
+ * @date Dec 11, 2021
  */
 
 #include <iostream>
@@ -114,7 +114,7 @@ const sign &big_int::get_sign() const
     return integer_sign;
 }
 /******************************* Private Functions ******************************/
-void big_int::multiply(const uint32_t &integer)
+void big_int::multiply_32(const uint32_t &integer)
 {
     uint64_t carry = 0;
     for (uint64_t &digit : coefficient)

@@ -4,7 +4,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
  * @version 0.1
- * @date Dec 9, 2021
+ * @date Dec 11, 2021
  */
 
 #include <iostream>
@@ -162,7 +162,7 @@ private:
      * @brief Multiplies an unsigned 32 bit integer to the current big number
      * @param integer a 32bit integer
      */
-    void multiply(const uint32_t &integer);
+    void multiply_32(const uint32_t &integer);
 
     /**
      * @brief Adds an unsigned 32 bit integer to the current big number

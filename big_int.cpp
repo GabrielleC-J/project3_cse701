@@ -196,7 +196,7 @@ void big_int::shrink()
     if (coefficient.size() > 1)
     {
         bool number_reached = false;
-        for (int i = coefficient.size() - 1; i > 0 && !number_reached; i--)
+        for (uint64_t i = coefficient.size() - 1; i > 0 && !number_reached; i--)
         {
             if (coefficient[i] == 0)
             {
@@ -221,17 +221,19 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.radix_complement());
 
         // Change the sign of sum big int to negative
-        sum.integer_sign == sign::NEGATIVE;
+        sum.integer_sign = sign::NEGATIVE;
     }
     else if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
     {
         // add radix of a and b coefficient
         sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.coefficient);
 
-        // update sum big int sign to negative if int_a is a bigger value
+        /* update sum big int sign to negative if int_a is a bigger value
+           and update the sum digits to the radix complement (since result is negative and in radix complement)*/
         if (int_a.coefficient_size() > int_b.coefficient_size())
         {
             sum.integer_sign = sign::NEGATIVE;
+            sum.coefficient = sum.radix_complement();
         }
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
@@ -239,6 +241,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
             if (int_a.coefficient[size] > int_b.coefficient[size])
             {
                 sum.integer_sign = sign::NEGATIVE;
+                sum.coefficient = sum.radix_complement();
             }
         }
     }
@@ -247,17 +250,20 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         // add a coefficient and radix of b
         sum.coefficient = add_coefficients(int_a.coefficient, int_b.radix_complement());
 
-        // update sum big int sign to negative if int_b is a bigger value
+        /* update sum big int sign to negative if int_b is a bigger value
+           and update the sum digits to the radix complement (since result is negative and in radix complement)*/
         if (int_a.coefficient_size() < int_b.coefficient_size())
         {
             sum.integer_sign = sign::NEGATIVE;
+            sum.coefficient = sum.radix_complement();
         }
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
             uint64_t size = int_a.coefficient_size();
-            if (int_a.coefficient[size] < int_b.coefficient[size])
+            if (int_a.coefficient[size - 1] < int_b.coefficient[size - 1])
             {
                 sum.integer_sign = sign::NEGATIVE;
+                sum.coefficient = sum.radix_complement();
             }
         }
     }
@@ -316,6 +322,50 @@ big_int operator*(const big_int &int_a, const big_int &int_b)
     }
 
     return product;
+}
+
+big_int operator/(const big_int &dividend, const big_int &divisor)
+{
+    // check for division by zero and throw exception
+
+    big_int quotient;
+    uint64_t dividend_size = dividend.coefficient_size();
+    uint64_t divisor_size = divisor.coefficient_size();
+    if (dividend_size < dividend_size)
+    {
+        return quotient;
+    }
+
+    big_int remainder;
+    for (uint64_t i = 0; i < dividend_size - divisor_size + 1; i++)
+    {
+        remainder.coefficient.insert(remainder.coefficient.begin(), dividend.coefficient[dividend_size - 1 - i]);
+
+        uint64_t count = 0;
+        big_int sub = remainder - divisor;
+        while (sub.get_sign() == sign::POSITIVE)
+        {
+            count++;
+            sub = sub - divisor;
+        }
+
+        for (uint64_t update = 0; update < count; update++)
+            remainder = remainder - divisor;
+
+        quotient.coefficient.insert(quotient.coefficient.begin(), count);
+    }
+
+    // Update the sign of the quotient either divisor or divident is negative
+    if (dividend.get_sign() == sign::NEGATIVE && divisor.get_sign() == sign::POSITIVE)
+    {
+        quotient.integer_sign = sign::NEGATIVE;
+    }
+    else if (dividend.get_sign() == sign::POSITIVE && divisor.get_sign() == sign::NEGATIVE)
+    {
+        quotient.integer_sign = sign::POSITIVE;
+    }
+
+    return quotient;
 }
 
 /************************** Helper Functions and other Operator Overloads *************************/

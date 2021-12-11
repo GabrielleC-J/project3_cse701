@@ -431,7 +431,8 @@ string print_base10(const big_int &integer)
     {
         base10 << copy.remainder_32(10);
         copy.divide_32(10);
-    } while (copy.at(0) != 0 && copy.coefficient_size() != 1);
+        copy.shrink();
+    } while (copy.at(0) != 0);
 
     // add sign of big integer to string
     if (copy.get_sign() == sign::POSITIVE)
@@ -466,7 +467,7 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
     uint64_t temp = 0;
 
     //For the rest of the coefficients add them and then carry (until the end of smallest coefficient vector)
-    for (uint64_t i = 0; i < vec1_size || i < vec2_size; i++)
+    for (uint64_t i = 0; i < vec1_size && i < vec2_size; i++)
     {
         temp = vec1[i] + vec2[i] + carry;
         sum.push_back(temp & (uint64_t)UINT32_MAX);

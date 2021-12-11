@@ -117,6 +117,23 @@ const sign &big_int::get_sign() const
 {
     return integer_sign;
 }
+
+// Referenced: https://en.cppreference.com/w/cpp/language/operators
+big_int &big_int::operator=(const big_int &big_integer)
+{
+
+    // Self assignment
+    if (this == &big_integer)
+    {
+        return *this;
+    }
+
+    coefficient = big_integer.coefficient;
+    integer_sign = big_integer.get_sign();
+
+    // return object
+    return *this;
+}
 /******************************* Private Functions ******************************/
 void big_int::multiply_32(const uint32_t &integer)
 {
@@ -407,28 +424,29 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
 // Referenced: https://www.cplusplus.com/reference/algorithm/reverse/
 string print_base10(const big_int &integer)
 {
-    string base10;
+    stringstream base10;
     big_int copy(integer);
 
     do
     {
-        base10.push_back(copy.remainder_32(10));
+        base10 << copy.remainder_32(10);
         copy.divide_32(10);
     } while (copy.at(0) != 0 && copy.coefficient_size() != 1);
 
     // add sign of big integer to string
     if (copy.get_sign() == sign::POSITIVE)
     {
-        base10.push_back('+');
+        base10 << '+';
     }
     else
     {
-        base10.push_back('-');
+        base10 << '-';
     }
 
-    reverse(base10.begin(), base10.end());
+    string int_reverse = base10.str();
+    reverse(int_reverse.begin(), int_reverse.end());
 
-    return base10;
+    return int_reverse;
 }
 
 /************************** Helper Functions and other Operator Overloads *************************/

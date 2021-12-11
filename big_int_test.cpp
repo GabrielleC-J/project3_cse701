@@ -126,7 +126,24 @@ void check_string_constructor(ofstream &file)
 }
 
 /**
- * @brief Tests to the addition function of a big integer
+ * @brief Tests for the print function of a big integer
+ */
+void check_print(ofstream &file)
+{
+    string pos_int = "+12345678987654321";
+    string neg_int = "-98765432123456789";
+    big_int positive(pos_int);
+    big_int negative(neg_int);
+
+    file << "Check the printing of a positive big integer ...";
+    check(pos_int.compare(print_base10(positive)) == 0, file);
+
+    file << "Check the printing of a negative big integer ...";
+    check(neg_int.compare(print_base10(negative)) == 0, file);
+}
+
+/**
+ * @brief Tests the addition operator overload of a big integer
  */
 void check_addition(ofstream &file)
 {
@@ -136,6 +153,9 @@ void check_addition(ofstream &file)
     check(sum.at(0) == 211 && sum.get_sign() == sign::NEGATIVE, file);
 }
 
+/**
+ * @brief Tests for the subtraction and negation operator overloads for big integer
+ */
 void check_subtraction_negation(ofstream &file)
 {
     big_int positive(45);
@@ -193,6 +213,7 @@ int main()
     number_tests_passed(log);
 
     log << "\n***********Testing printing to a string of the big_int class:***********\n";
+    check_print(log);
 
     log << "\n***********Testing addition of the big_int class:***********\n";
     check_addition(log);

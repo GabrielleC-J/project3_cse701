@@ -137,6 +137,13 @@ public:
      */
     const sign &get_sign() const;
 
+    /**
+     * @brief Operator overload for the =
+     * @param big_integer A big integer to be copied
+     * @return A new big_int that is a copy of the argument
+     */
+    big_int &operator=(const big_int &big_integer);
+
 private:
     // List containing all coefficients for the big number starting with least significant at index 0
     vector<uint64_t> coefficient;
@@ -207,7 +214,7 @@ public:
 class division_by_zero : public invalid_argument
 {
 public:
-    division_by_zero() : invalid_argument("Cannot divide a big integer by zero");
+    division_by_zero() : invalid_argument("Cannot divide a big integer by zero"){};
 };
 
 /************************* Operator Overloads ***********************/
@@ -221,7 +228,8 @@ ostream &operator<<(ostream &out, const big_int &num);
 /************************** Helper Functions and other Operator Overloads *************************/
 
 /**
- * @brief A friend function that negates a big integer
+ * @brief Negation operator overload 
+ * @details Finds the negation of the argument big int and returns a new big int with the negation value
  * @param int_a The big_int to be negated
  * @return A big_int that represents the result 
  */

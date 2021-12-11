@@ -67,10 +67,14 @@ big_int::big_int(const string &integer) : coefficient((1))
 
 big_int::big_int(const big_int &big_integer)
 {
+    // Copy the digits of the argument big integer
     for (const uint64_t &digits : big_integer.coefficient) // Don't think this is allowed because object is accessing private var
     {
         coefficient.push_back(digits);
     }
+
+    // update the sign of the new big int to that of the argument
+    integer_sign = big_integer.get_sign();
 }
 
 big_int::big_int(const vector<uint32_t> &vec)

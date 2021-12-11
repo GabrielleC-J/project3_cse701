@@ -59,6 +59,13 @@ class big_int
      */
     friend big_int operator/(const big_int &dividend, const big_int &divisor);
 
+    /**
+     * @brief Returns the string base 10 value of the big integer
+     * @param integer A big_int that will be converted to base 10
+     * @return A string containing the base 10 value of the big integer
+     */
+    friend string print_base10(const big_int &integer);
+
 public:
     /************************** Constructors ****************************/
     /**
@@ -109,12 +116,6 @@ public:
      * @brief The negation operation of the current big integer
      */
     void negate();
-
-    /**
-     * @brief Returns the string base 10 value of the big integer
-     * @return A string containing the base 10 value of the big integer
-     */
-    string print_decimal() const;
 
     /**
      * @brief Checks if index is in range and gets coefficient at index

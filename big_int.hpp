@@ -170,6 +170,18 @@ private:
     void add_32(const uint32_t &integer);
 
     /**
+     * @brief Divides the current big number by an unsigned 32 bit integer
+     * @param integer a 32bit integer
+     */
+    void divide_32(const uint32_t &integer);
+
+    /**
+     * @brief Finds the remainder of the currend big int divided by an unsigned 32 bit integer
+     * @param integer a 32 bit integer
+     */
+    void remainder_32(const uint32_t &integer);
+
+    /**
      * @brief Finds the radix complement of the big integer where the radix is 2^32
      * @details This will be used for addition
      * @return a vector of unsigned 64 bit integers representing the radix complement of the big int

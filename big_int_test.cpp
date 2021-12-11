@@ -42,7 +42,7 @@ void number_tests_passed(ofstream &file)
 {
     if (failed_counter == 0)
     {
-        file << "All " << to_string(passed_counter) << " tests passed!!\n";
+        file << "\nAll " << to_string(passed_counter) << " tests passed!!\n";
     }
     else
     {
@@ -74,6 +74,9 @@ void check_other_constructors(ofstream &file)
     check(zero_default.at(0) == 0 && zero_default.coefficient_size() == 1, file);
 
     // Check copy constructor
+    file << "Copy Constructor check ...";
+    big_int to_copy(12345678910);
+    check(to_copy.at(0) == 3755744318 && to_copy.at(1) == 2 && to_copy.coefficient_size() == 2, file);
 }
 
 /**
@@ -122,7 +125,18 @@ void check_string_constructor(ofstream &file)
     file << "Check negative string, that coefficients are values as if number was positive ...";
     check(neg_string_int.at(0) == 256 && neg_string_int.coefficient_size() == 1, file);
 
-    file << "Check invalid input of the string argument ...\n"; /**TODO**/
+    file << "Check invalid input of the string argument ...";
+    try
+    {
+        big_int failed_int("-123457j234");
+        // Failed to throw exception
+        check(false, file);
+    }
+    catch (const invalid_argument &e)
+    {
+        // exception thrown
+        check(true, file);
+    }
 }
 
 /**
@@ -136,10 +150,10 @@ void check_print(ofstream &file)
     big_int negative(neg_int);
 
     file << "Check the printing of a positive big integer ...";
-    check(pos_int.compare(print_base10(positive)) == 0, file);
+    check(pos_int == print_base10(positive), file);
 
     file << "Check the printing of a negative big integer ...";
-    check(neg_int.compare(print_base10(negative)) == 0, file);
+    check(neg_int == print_base10(negative), file);
 }
 
 /**
@@ -167,6 +181,48 @@ void check_subtraction_negation(ofstream &file)
     file << "Checking subtraction of 2 positive numbers with the 2nd being bigger ...";
     big_int sub = positive - positive2;
     check(sub.at(0) == 211 && sub.get_sign() == sign::NEGATIVE, file);
+}
+
+/**
+ * @brief Tests the multiplication operator overload for big integer
+ */
+void check_multiplication(ofstream &file)
+{
+    big_int small_1(98);
+    big_int small_2(4);
+    string small_sol = "+392";
+    big_int pos_1("7657346809103847");
+    big_int pos_2("675335738394");
+    string two_pos_solution = "+5171279961465086275171001718"; // pos_1*pos_2
+    big_int neg_1(-50);
+    big_int neg_2("-394785643744");
+    string two_neg_sol = "+19739282187200";               // neg_1*neg_2
+    string neg_pos_sol = "-3023010589403126517641883168"; // pos_1 * neg_2
+
+    file << "Checking multiplication of basic integers ...";
+    check(small_sol == print_base10(small_1 * small_2), file);
+
+    file << "checking the multiplication of two positive big numbers ...";
+    check(two_pos_solution == print_base10(pos_1 * pos_2), file);
+
+    file << "Checking the multiplication of two negative big integers ...";
+    check(two_neg_sol == print_base10(neg_1 * neg_2), file);
+
+    file << "Checking the multiplication of a negative and positive big integer ...";
+    check(neg_pos_sol == print_base10(pos_1 * neg_2), file);
+}
+
+/**
+ * @brief Test the division operator overload for big integers
+ */
+void check_division(ofstream &file)
+{
+    big_int small_1(95);
+    big_int small_2(6);
+    string small_sol = "+15"; // small_1*small_2
+
+    file << "Checking division for basic integers ...";
+    check(small_sol == print_base10(small_1 / small_2), file);
 }
 
 int main()
@@ -222,8 +278,10 @@ int main()
     check_subtraction_negation(log);
 
     log << "\n***********Testing multiplication of the big_int class:***********\n";
+    check_multiplication(log);
 
     log << "\n***********Testing division of the big_int class:***********\n";
+    check_division(log);
 
     if (failed_counter == 0)
     {
@@ -238,5 +296,6 @@ int main()
 
     // Close log file and inform done writing
     log.close();
-    cout << "Finished testing the big_int class, see the log file " << log_file << " for all the information.\n";
+    cout << "Finished testing the big_int class.\n"
+         << to_string(passed_counter) << " tests passed and " << to_string(failed_counter) << " tests failed.\nSee the log file " << log_file << " for all the information.\n";
 }

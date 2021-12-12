@@ -414,17 +414,24 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
     }
 
     big_int quotient;
+    big_int one(1);
     uint64_t dividend_size = dividend.coefficient_size();
     uint64_t divisor_size = divisor.coefficient_size();
     if (dividend_size < divisor_size)
     {
         return quotient;
     }
+    // if divisor equals 1 ***TODO***
 
     big_int remainder;
+    remainder.coefficient.erase(remainder.coefficient.begin());
+    for (uint64_t index = dividend_size - 1 - (divisor_size - 2); index < dividend_size; index++)
+    {
+        remainder.coefficient.push_back(dividend.coefficient[index]);
+    }
     for (uint64_t i = 0; i < dividend_size - divisor_size + 1; i++)
     {
-        remainder.coefficient.insert(remainder.coefficient.begin(), dividend.coefficient[dividend_size - 1 - i]);
+        remainder.coefficient.insert(remainder.coefficient.begin(), dividend.coefficient[dividend_size - divisor_size - i]);
 
         uint64_t count = 0;
         big_int sub = remainder - divisor;

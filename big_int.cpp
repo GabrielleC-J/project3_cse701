@@ -266,12 +266,13 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
     big_int sum;
     if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign ::NEGATIVE)
     {
-        // add the two radix complements
-        sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.radix_complement());
+        // add the two big integers (no need for radix complement since both negative)
+        sum.coefficient = add_coefficients(int_a.coefficient, int_b.coefficient);
 
         // Change the sign of sum big int to negative
         sum.integer_sign = sign::NEGATIVE;
     }
+
     else if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
     {
         // add radix of a and b coefficient
@@ -287,13 +288,29 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
             uint64_t size = int_a.coefficient_size();
-            if (int_a.coefficient[size] > int_b.coefficient[size])
+            // Loop through each digit until find that one is bigger than the other
+            for (int64_t index = size - 1; index >= 0; index--) /****** Check into if need to optimize since can't use unsigned int**********/
             {
-                sum.integer_sign = sign::NEGATIVE;
-                sum.coefficient = sum.radix_complement();
+                // set sign to negative and set digits to the radix complement
+                if (int_a.coefficient[index] > int_b.coefficient[index])
+                {
+                    sum.integer_sign = sign::NEGATIVE;
+                    sum.coefficient = sum.radix_complement();
+                    break;
+                }
+                // remove the extra carry digit of 1 if a < b, due to radix complement
+                else if (int_a.coefficient[index] < int_b.coefficient[index])
+                {
+                    sum.coefficient.pop_back();
+                    break;
+                }
             }
         }
+        // need to remove extra leading digit added by using radix complement since negative int is smaller
+        else
+            sum.coefficient.pop_back();
     }
+
     else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign ::NEGATIVE)
     {
         // add a coefficient and radix of b
@@ -309,12 +326,27 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
             uint64_t size = int_a.coefficient_size();
-            if (int_a.coefficient[size - 1] < int_b.coefficient[size - 1])
+            // Loop through each digit until find that one is bigger than the other
+            for (int64_t index = size - 1; index >= 0; index--) /****** Check into if need to optimize since can't use unsigned int**********/
             {
-                sum.integer_sign = sign::NEGATIVE;
-                sum.coefficient = sum.radix_complement();
+                // set sign to negative and set digits to the radix complement
+                if (int_a.coefficient[index] < int_b.coefficient[index])
+                {
+                    sum.integer_sign = sign::NEGATIVE;
+                    sum.coefficient = sum.radix_complement();
+                    break;
+                }
+                // remove the extra carry digit of 1 if a < b, due to radix complement
+                else if (int_a.coefficient[index] > int_b.coefficient[index])
+                {
+                    sum.coefficient.pop_back();
+                    break;
+                }
             }
         }
+        // need to remove extra leading digit added by using radix complement since negative int is smaller
+        else
+            sum.coefficient.pop_back();
     }
     else
     {
@@ -427,6 +459,7 @@ string print_base10(const big_int &integer)
     stringstream base10;
     big_int copy(integer);
 
+    // Divide the big integer by 10 and the remainder is a digit of  the integer in base 10, until big integer is zero
     do
     {
         base10 << copy.remainder_32(10);

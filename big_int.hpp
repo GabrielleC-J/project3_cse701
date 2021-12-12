@@ -4,7 +4,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
  * @version 0.1
- * @date Dec 11, 2021
+ * @date Dec 12, 2021
  */
 
 #include <iostream>
@@ -101,18 +101,6 @@ public:
 
     /******************* Public Member Functions *******************/
     /**
-     * @brief Adds another big integer to this big interger
-     * @param num A big_int that is to be added
-     */
-    void add(const big_int &num);
-
-    /**
-     * @brief Subtracts another big integer from this Big integer
-     * @param num A big_int that is to be added
-     */
-    void sub(big_int &num);
-
-    /**
      * @brief The negation operation of the current big integer
      */
     void negate();
@@ -167,24 +155,28 @@ private:
 
     /**
      * @brief Multiplies an unsigned 32 bit integer to the current big number
+     * @details Helper function for reading in a string
      * @param integer a 32bit integer
      */
     void multiply_32(const uint32_t &integer);
 
     /**
      * @brief Adds an unsigned 32 bit integer to the current big number
+     * @details helper function for reading in string
      * @param integer a 32 bit integer
      */
     void add_32(const uint32_t &integer);
 
     /**
      * @brief Divides the current big number by an unsigned 32 bit integer
+     * @details Helper function for writing to a string
      * @param integer a 32bit integer
      */
     void divide_32(const uint32_t &integer);
 
     /**
      * @brief Finds the remainder of the currend big int divided by an unsigned 32 bit integer
+     * @details Helper function for writing to a string
      * @param integer a 32 bit integer
      * @return integer indicating the remainder
      */
@@ -217,15 +209,7 @@ public:
     division_by_zero() : invalid_argument("Cannot divide a big integer by zero"){};
 };
 
-/************************* Operator Overloads ***********************/
-
-/**
- * @brief Operator overload for <<
- * @return an ostream
- */
-ostream &operator<<(ostream &out, const big_int &num);
-
-/************************** Helper Functions and other Operator Overloads *************************/
+/************************** Helper Functions and Other Operator Overloads *************************/
 /**
  * @brief Negation operator overload 
  * @details Finds the negation of the argument big int and returns a new big int with the negation value

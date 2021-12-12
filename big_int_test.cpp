@@ -161,10 +161,26 @@ void check_print(ofstream &file)
  */
 void check_addition(ofstream &file)
 {
-    big_int number1(45);
-    big_int number2(-256);
-    big_int sum = number1 + number2;
-    check(sum.at(0) == 211 && sum.get_sign() == sign::NEGATIVE, file);
+    big_int small_neg(-45);
+    big_int positive_1("38374635927640");
+    big_int positive_2("63528394639737489393048304");
+    big_int negative_1("-3638493734930473947493");
+
+    file << "Check the addition of two positive numbers";
+    big_int sum_pos = positive_1 + positive_2;
+    check("+63528394639775864028975944" == print_base10(sum_pos), file);
+
+    file << "Check the addition of two negative numbers";
+    big_int sum_neg = negative_1 + small_neg;
+    check("-3638493734930473947538" == print_base10(sum_neg), file);
+
+    file << "Check the addition of a smaller negative value and bigger positive ...";
+    big_int sum_pos_bigger = positive_2 + negative_1;
+    check("+63524756146002558919100811" == print_base10(sum_pos_bigger), file);
+
+    file << "Check the addition of a bigger negative value and smaller positive ...";
+    big_int sum_neg_bigger = negative_1 + positive_1;
+    check("-3638493696555838019853" == print_base10(sum_neg_bigger), file);
 }
 
 /**
@@ -174,13 +190,18 @@ void check_subtraction_negation(ofstream &file)
 {
     big_int positive(45);
     big_int positive2(256);
-    big_int negative = -positive;
+
     file << "Checking the negation operator overload ...";
+    big_int negative = -positive;
     check(negative.get_sign() == sign::NEGATIVE && negative.at(0) == 45, file);
 
     file << "Checking subtraction of 2 positive numbers with the 2nd being bigger ...";
     big_int sub = positive - positive2;
-    check(sub.at(0) == 211 && sub.get_sign() == sign::NEGATIVE, file);
+    check("-211" == print_base10(sub), file);
+
+    file << "Checking subtraction of 2 positive numbers where 2nd is smaller ...";
+    big_int sub2 = positive2 - positive;
+    check("+211" == print_base10(sub2), file);
 }
 
 /**

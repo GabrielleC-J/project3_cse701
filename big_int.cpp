@@ -458,6 +458,64 @@ big_int operator-(const big_int &int_a)
     return negation;
 }
 
+bool operator<(const big_int int_a, const big_int &int_b)
+{
+    sign a_sign = int_a.get_sign();
+    sign b_sign = int_b.get_sign();
+    uint64_t a_size = int_a.coefficient_size();
+    uint64_t b_size = int_b.coefficient_size();
+
+    // Check if one int is negative and the other is positive
+    if (a_sign == sign::NEGATIVE && b_sign == sign::POSITIVE)
+        return true;
+    else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign::NEGATIVE)
+        return false;
+
+    // Since both ints have same sign, check if int a has more digits than b
+    else if (a_size < b_size)
+        return true;
+    else if (a_size > b_size)
+        return false;
+
+    // Both ints have same number of digits, starting with most significant, go digit by digit and compare
+    // If digits are the same move to next digit
+    for (uint64_t i = a_size - 1; i > 0; i--)
+    {
+        // Check if digit of a is < digit of b
+        if (int_a.at(i) < int_b.at(i))
+            return true;
+        // Check if digit of a > digit of b
+        else if (int_a.at(i) > int_b.at(i))
+            return false;
+    }
+
+    // Check the least significant digit at index 0
+    if (int_a.at(0) < int_b.at(0))
+        return true;
+    return false;
+}
+
+bool operator>(const big_int int_a, const big_int &int_b)
+{
+    return int_b < int_a;
+}
+
+bool operator!=(const big_int int_a, const big_int &int_b)
+{
+    // Check if each digit of both integers are the same value
+    for (uint64_t index = 0; index < int_a.coefficient_size(); index++)
+    {
+        if (int_a.at(index) != int_b.at(index))
+            return true;
+    }
+
+    // Since both ints are the same check for different signs
+    if (int_a.get_sign() != int_b.get_sign())
+        return true;
+
+    return false;
+}
+
 vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2)
 {
     vector<uint64_t> sum;

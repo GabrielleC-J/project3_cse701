@@ -226,7 +226,6 @@ public:
 ostream &operator<<(ostream &out, const big_int &num);
 
 /************************** Helper Functions and other Operator Overloads *************************/
-
 /**
  * @brief Negation operator overload 
  * @details Finds the negation of the argument big int and returns a new big int with the negation value
@@ -234,6 +233,30 @@ ostream &operator<<(ostream &out, const big_int &num);
  * @return A big_int that represents the result 
  */
 big_int operator-(const big_int &int_a);
+
+/**
+ * @brief Operator overload for <
+ * @param int_a the first big_int to compare
+ * @param int_b the second big_int to compare
+ * @return A boolean value stating if int_a < int_b
+ */
+bool operator<(const big_int int_a, const big_int &int_b);
+
+/**
+ * @brief Operator overload for >
+ * @param int_a the first big_int to compare
+ * @param int_b the second big_int to compare
+ * @return A boolean value stating if int_a > int_b
+ */
+bool operator>(const big_int int_a, const big_int &int_b);
+
+/**
+ * @brief Operator overload for !=
+ * @param int_a the first big_int to compare
+ * @param int_b the second big_int to compare
+ * @return A boolean value stating if int_a != int_b
+ */
+bool operator!=(const big_int int_a, const big_int &int_b);
 
 /**
  * @brief Adds two vectors element by element and incorporates the carry as if adding two big integers

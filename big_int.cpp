@@ -54,7 +54,7 @@ big_int::big_int(const string &integer) : coefficient((1))
     // For each digit character in the string multiply the big integer by 10 and then add the digit value
     for (const char &digit : integer_temp)
     {
-        // First check to make sure digit is from 0 to 9
+        // Check to make sure digit is from 0 to 9
         if (isdigit(digit) == 0)
         {
             throw invalid_string_integer();
@@ -366,7 +366,7 @@ big_int operator*(const big_int &int_a, const big_int &int_b)
 {
     big_int product;
 
-    // multiply each coefficient/digit of the multiplier (int_b) by each coefficient of the multiplicand (int_a)
+    // multiply each coefficient/digit of the multiplier (int_b) by each coefficient/digit of the multiplicand (int_a)
     for (uint64_t i = 0; i < int_a.coefficient_size(); i++)
     {
         uint64_t carry = 0;
@@ -484,6 +484,7 @@ string print_base10(const big_int &integer)
         base10 << '-';
     }
 
+    // Referse the integer string since remainder starts producing from least significant digit
     string int_reverse = base10.str();
     reverse(int_reverse.begin(), int_reverse.end());
 
@@ -493,6 +494,7 @@ string print_base10(const big_int &integer)
 /************************** Helper Functions and other Operator Overloads *************************/
 big_int operator-(const big_int &int_a)
 {
+    // Copy int a and use negate member function on the copy
     big_int negation(int_a);
     negation.negate();
     return negation;
@@ -600,33 +602,3 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
 
     return sum;
 }
-
-/* big_int::add(const big_int &num)
-{
-    //Check to make sure the big integers have the same number of coefficients
-
-    // Add each coefficient and include carry
-
-    uint64_t carry = 0;
-
-    for (uint64_t i = 0; i < coefficient.size(); i++)
-    {
-        uint64_t sum = coefficient[i] + num.at(i) + carry;
-        carry = sum >> 32;
-        uint64_t max = UINT32_MAX;
-        result.at(i) = sum & max;
-    }
-
-    return result;
-}
- */
-/**************************** Operator Overloads **********************/
-
-/* ostream &operator<<(ostream &out, const BigInt &num)
-{
-    out << '(';
-    for (uint64_t i = num.coefficient_size() - 1; i >= 0; i--)
-    {
-        out << num.coefficient[i] << ",";
-    }
-} */

@@ -340,18 +340,20 @@ int main()
     string log_file_name = "log_file_big_int_tests";
     string log_file_type = ".txt";
     string log_file = log_file_name + log_file_type;
-    filesystem::path out_path(log_file);
+    string file_path = "../" + log_file;
+    filesystem::path out_path(file_path);
     int file_num = 1;
     string original_log_file = log_file;
     while (filesystem::exists(out_path))
     {
         log_file = log_file_name + "_" + to_string(file_num) + log_file_type;
-        out_path.replace_filename(log_file);
+        file_path = "../" + log_file;
+        out_path.replace_filename(file_path);
         file_num += 1;
     }
 
     // Open log file and check to ensure it opens
-    ofstream log(log_file, ios::app);
+    ofstream log(file_path, ios::app);
     if (!log.is_open())
     {
         cout << "Error opening file " << log_file << "!\n";

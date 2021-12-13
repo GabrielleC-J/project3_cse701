@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief This file runs unit tests for the big_int class
  * @version 0.1
- * @date Dec 7, 2021
+ * @date Dec 12, 2021
  */
 
 #include <iostream>
@@ -17,6 +17,8 @@ using namespace std;
 
 uint8_t passed_counter = 0;
 uint8_t failed_counter = 0;
+uint8_t total_passed = 0;
+uint8_t total_failed = 0;
 
 /**
  * @brief Checks if each unit test passes or fails and writes output to log file
@@ -38,27 +40,33 @@ void check(bool condition, ofstream &file)
     }
 }
 
+/**
+ * @brief Writes total number of tests passed in a section and total failed
+ * @param file file to write outcome of tests
+ */
 void number_tests_passed(ofstream &file)
 {
     if (failed_counter == 0)
     {
-        file << "\nAll " << to_string(passed_counter) << " tests passed!!\n";
+        file << "\nAll " << to_string(passed_counter) << " tests in the section passed!!\n";
     }
     else
     {
-        file << "Not all tests passed!\n"
+        file << "\nNot all tests passed!\n"
              << "Number of tests passed: " << to_string(passed_counter) << "\n"
              << "Number of tests failed: " << to_string(failed_counter) << "\n";
     }
 }
 
 /**
- * @brief Prints desired string to a file
- * @param file The file to print line to
+ * @brief Updates total counters
  */
-void printline(string line, ofstream file)
+void update_counters()
 {
-    file << line;
+    total_passed += passed_counter;
+    total_failed += failed_counter;
+    passed_counter = 0;
+    failed_counter = 0;
 }
 
 /********************************************* Test Functions **********************************************/
@@ -358,39 +366,70 @@ int main()
 
     /*********************************** Run tests and Write output to log files ****************************************/
     log << "***********Testing all constructors of the big_int class:***********\n";
+    cout << "Testing Constructors\n";
     check_other_constructors(log);
     check_integer_constructor(log);
     check_string_constructor(log);
     number_tests_passed(log);
+    update_counters();
 
     log << "\n***********Testing printing to a string of the big_int class:***********\n";
+    cout << "Testing printing to base 10\n";
     check_print(log);
+    number_tests_passed(log);
+    update_counters();
 
     log << "\n***********Testing addition of the big_int class:***********\n";
+    cout << "Testing Addition\n";
     check_addition(log);
+    number_tests_passed(log);
+    update_counters();
 
     log << "\n***********Testing subtraction and negation of the big_int class:***********\n";
+    cout << "Testing Subtraction and Negation\n";
     check_subtraction_negation(log);
+    number_tests_passed(log);
+    update_counters();
 
     log << "\n***********Testing multiplication of the big_int class:***********\n";
+    cout << "Testing Multiplication\n";
     check_multiplication(log);
+    number_tests_passed(log);
+    update_counters();
 
     log << "\n***********Testing division of the big_int class:***********\n";
+    cout << "Testing Division\n";
     check_division(log);
+    number_tests_passed(log);
+    update_counters();
 
-    if (failed_counter == 0)
+    log << "\n************Testing less than and greater than operator of big_int class:************\n";
+    cout << "Testing Less than and Greater than Operator\n";
+    check_less_and_greater_than(log);
+    number_tests_passed(log);
+    update_counters();
+
+    log << "\n************Testing equals and not equals operator of big_int class:************\n";
+    cout << "Testing Equals and Not Equals Operator\n";
+    check_not_equals_and_equals(log);
+    number_tests_passed(log);
+    update_counters();
+
+    // Write overall total passed and failed
+    log << "\n*********************************************\n";
+    if (total_failed == 0)
     {
-        log << "\nOverall " << to_string(passed_counter) << " tests passed!!\n";
+        log << "Overall " << to_string(total_passed) << " tests passed!!\n";
     }
     else
     {
         log << "\nOverall not all tests passed!\n"
-            << "Number of tests passed: " << to_string(passed_counter) << "\n"
-            << "Number of tests failed: " << to_string(failed_counter) << "\n";
+            << "Number of tests passed: " << to_string(total_passed) << "\n"
+            << "Number of tests failed: " << to_string(total_failed) << "\n";
     }
 
     // Close log file and inform done writing
     log.close();
     cout << "Finished testing the big_int class.\n"
-         << to_string(passed_counter) << " tests passed and " << to_string(failed_counter) << " tests failed.\nSee the log file " << log_file << " for all the information.\n";
+         << to_string(total_passed) << " tests passed and " << to_string(total_failed) << " tests failed.\nSee the log file " << log_file << " for all the information.\n";
 }

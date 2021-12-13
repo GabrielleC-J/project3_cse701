@@ -7,12 +7,13 @@ In many computer programs the precision of an arithmetic operation is limited to
 
 Every number can be presented in the following manner:
 
-<p align="center">x = x~n-1~b^n-1^ + ... + x~2~b^2^ + x~1~b^1^ + x~0~b^0^</p>
+$x = x_{n-1}b^{n-1} + ... + x_{2}b^{2} + x_{1}b^{1} + x_{0}b^{0}$
+
 where b represents the base the number is in and the x's coefficients are the digits in the specified base.
 
 This library will take advantage of the form above to save memory space by utilizing a different base, instead of base 10, to store the digits of an integer.
 
-An example in base 10:  <p align="center">$12345 = 1*10^4 + 2*10^3 + 3*10^2 + 4*10 + 5$</p>
+An example in base 10:  <p align="center">$12345 = 1 * 10^4 + 2 * 10^3 + 3 * 10^2 + 4 * 10 + 5$</p>
 
 
 Therefore this library was made in order to allow for any integer of any precision, while performing arithmetic operations.
@@ -30,10 +31,11 @@ The operations that can occur on "big_int"s in the library are:
 * less than
 * greater than
 * not equal to
+* equal to
 
 ## Data Structure and Base
 ### Base
-Utilizing the form specified in the background information for integers, instead of storing integers in base 10, this library will store the integers in base $2^32^$ to save memory space.
+Utilizing the form specified in the background information for integers, instead of storing integers in base 10, this library will store the integers in base $2^{32}$ to save memory space.
 
 ### Data Structure for Digits storage
 The data structure used to store the digits is a vector of unsigned 64 bit integers called coefficients: `vector<uint64_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, each digit will be an unsigned 64 bit integer (rather than using an unsigned 32 bit integer) since each coefficient/digit can only have a value less than the base.
@@ -86,9 +88,6 @@ sign integer_sign = sign::NEGATIVE
     // Create a copy:
     big_int copy(to_copy);
     ```
-### Integer Constructor - The Method
-
-### String Constructor - The Method
 
 ## Printing to a string in base 10
 
@@ -96,11 +95,24 @@ The function `print_base10()` is a friend function of the `big_int` class. The m
 
 Example:
 ```cpp
+big_int integer("2345566")
+cout << print_base10(integer) << "\n
 
+big_int integer2("+56385769384754834")
+cout << print_base10(integer2) << "\n
+
+big_int integer3("-465788474")
+cout << print_base10(integer3) << "\n
+```
+The output:
+```none
++2345566
++56385769384754834
+-465788474
 ```
 
 ### The Method
-In order to get the base 10 digits, first divide the big_int by 10 and the remainder of this division will be the least significant digit of the integer in base 10. Then continuously divide by 10 and get the remaining digits using the remainder until the division by ten produces results in 0.
+In order to get the base 10 digits, first divide the big_int by 10 and the remainder of this division will be the least significant digit of the integer in base 10. Then continuously divide by 10 and get the remaining digits using the remainder until the division by ten results in 0.
 
 The helper private functions of the class `big_int` that are used by this function are `divide32() and remainder32()`. The `divide32()` function takes an unsigned 32 bit integer argument and divides the big integer by this value and thus will be used when dividing by 10. While the `remainder32()` takes an unsigned 32 bit integer argument and outputs the remainder of the big integer divided by this value and thus will be used when finding the remainder by dividing by 10.
 
@@ -325,7 +337,7 @@ a is not equal to b
 ## Testing of Library
 The file ***big_int_test.cpp*** contains all the unit tests for the `big_int` class.
 
-There are a total of 25 test and tests all the arithmetic operations, the constructors and the print_base10 function.
+There are a total of 37 tests and this tests all the arithmetic operations, the constructors and the print_base10 function.
 
 A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended too the end of the name until the file does not exist, thus not deleting any existing log files.
 

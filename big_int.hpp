@@ -224,7 +224,7 @@ big_int operator-(const big_int &int_a);
  * @param int_b the second big_int to compare
  * @return A boolean value stating if int_a < int_b
  */
-bool operator<(const big_int int_a, const big_int &int_b);
+bool operator<(const big_int &int_a, const big_int &int_b);
 
 /**
  * @brief Operator overload for >
@@ -232,7 +232,7 @@ bool operator<(const big_int int_a, const big_int &int_b);
  * @param int_b the second big_int to compare
  * @return A boolean value stating if int_a > int_b
  */
-bool operator>(const big_int int_a, const big_int &int_b);
+bool operator>(const big_int &int_a, const big_int &int_b);
 
 /**
  * @brief Operator overload for !=

@@ -240,10 +240,84 @@ void check_division(ofstream &file)
 {
     big_int small_1(95);
     big_int small_2(6);
-    string small_sol = "+15"; // small_1*small_2
+    big_int pos_1("56789738193238029839");
+    big_int pos_2("893293838329");
+    big_int neg_1("-464836");
 
     file << "Checking division for basic integers ...";
-    check(small_sol == print_base10(small_1 / small_2), file);
+    check("+15" == print_base10(small_1 / small_2), file);
+
+    file << "Checking division for dividend < divisor ...";
+    check("+0" == print_base10(neg_1 / pos_2), file);
+
+    file << "Checking division by zero exception thrown ...";
+    try
+    {
+        big_int zero;
+        pos_1 / zero;
+        // Failed to throw exception
+        check(false, file);
+    }
+    catch (const invalid_argument &e)
+    {
+        // exception thrown
+        check(true, file);
+    }
+
+    file << "Checking division for negative and positive integers ...";
+    check("-4893" == print_base10(neg_1 / small_1), file);
+    //BUG: if divisor is negative, get stuck in the while loop
+
+    file << "Checking division of two positive numbers ...";
+    check("+63573" == print_base10(pos_1 / pos_2), file);
+    //BUG: glitch found when the big_ints have more than one digit in base 32
+}
+
+/**
+ * @brief Test the < and > operator overload for big integers
+ */
+void check_less_and_greater_than(ofstream &file)
+{
+    big_int pos_1("235632");
+    big_int pos_2("46383");
+    big_int neg_1("-3654836");
+    big_int neg_2("-76327");
+    big_int more_digits("3764839473947839");
+
+    file << "Checking less than for two positive numbers ...";
+    check(pos_2 < pos_1, file);
+
+    file << "Checking greater than for exact same numbers as two positive less than ...";
+    check(pos_1 > pos_2, file);
+
+    file << "Checking less than for two negative numbers ...";
+    check(neg_1 < neg_2, file);
+
+    file << "Checking less than for negative and positive numbers ...";
+    check(neg_1 < pos_1, file);
+
+    file << "Checking less than for integers with different number of digits in base 2^32 ...";
+    check(pos_1 < more_digits, file);
+}
+
+/**
+ * @brief Test != and == operator overload for big integers
+ */
+void check_not_equals_and_equals(ofstream &file)
+{
+    big_int pos_1("3764839473947839");
+    big_int equal_pos_1("+3764839473947839");
+    big_int neg_1("-3764839473947839");
+    big_int pos_2("46383");
+
+    file << "Checking equals for the same value ...";
+    check(pos_1 == equal_pos_1, file);
+
+    file << "Checking not equals for the same value but different sign ...";
+    check(pos_1 != neg_1, file);
+
+    file << "Checking not equals for two different values ...";
+    check(pos_2 != pos_1, file);
 }
 
 int main()

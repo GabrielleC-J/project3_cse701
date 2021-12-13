@@ -240,7 +240,15 @@ bool operator>(const big_int int_a, const big_int &int_b);
  * @param int_b the second big_int to compare
  * @return A boolean value stating if int_a != int_b
  */
-bool operator!=(const big_int int_a, const big_int &int_b);
+bool operator!=(const big_int &int_a, const big_int &int_b);
+
+/**
+ * @brief Operator overload for ==
+ * @param int_a the first big_int to compare
+ * @param int_b the second big_int to compare
+ * @return A boolean value stating if int_a == int_b
+ */
+bool operator==(const big_int &int_a, const big_int &int_b);
 
 /**
  * @brief Adds two vectors element by element and incorporates the carry as if adding two big integers

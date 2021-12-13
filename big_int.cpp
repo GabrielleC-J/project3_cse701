@@ -572,6 +572,11 @@ bool operator!=(const big_int int_a, const big_int &int_b)
     return false;
 }
 
+bool operator==(const big_int &int_a, const big_int &int_b)
+{
+    return !(int_a != int_b);
+}
+
 vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2)
 {
     vector<uint64_t> sum;

@@ -128,7 +128,7 @@ public:
     /**
      * @brief Operator overload for the =
      * @param big_integer A big integer to be copied
-     * @return A new big_int that is a copy of the argument
+     * @return A reference to a new big_int that is a copy of the argument
      */
     big_int &operator=(const big_int &big_integer);
 

@@ -26,6 +26,8 @@ big_int::big_int(const int64_t &integer)
         integer_sign = sign::NEGATIVE;
         value = -integer;
     }
+
+    // Divide by base of 2^32 and add remainder to the coefficient vector of digits
     uint64_t remainder = value % base;
     coefficient.push_back(remainder);
     while (value > base)
@@ -39,7 +41,7 @@ big_int::big_int(const int64_t &integer)
 big_int::big_int(const string &integer) : coefficient((1))
 {
     string integer_temp = integer;
-    // Check to see if 1st digit is a "+" or "-" sign and remove **Thoughts: maybe shouldn't erase and should just use a substring instead of copying in the beginning **
+    // Check to see if 1st digit is a "+" or "-" sign and remove                    ** OPTIMIZATION: maybe shouldn't erase and should just use a substring instead of copying in the beginning **
     if (integer[0] == '+')
     {
         integer_sign = sign::POSITIVE;
@@ -68,7 +70,7 @@ big_int::big_int(const string &integer) : coefficient((1))
 big_int::big_int(const big_int &big_integer)
 {
     // Copy the digits of the argument big integer
-    for (const uint64_t &digits : big_integer.coefficient) // Don't think this is allowed because object is accessing private var
+    for (const uint64_t &digits : big_integer.coefficient) // ***TODO: See if breaks encapsulation***
     {
         coefficient.push_back(digits);
     }
@@ -79,6 +81,7 @@ big_int::big_int(const big_int &big_integer)
 
 big_int::big_int(const vector<uint32_t> &vec)
 {
+    // Reverse the vector such that the most significant digit is at the last index
     coefficient.reserve(vec.size());
     for (uint64_t i = vec.size() - 1; i > 0; i--)
     {
@@ -109,7 +112,6 @@ const uint64_t &big_int::at(const uint64_t &index) const
 
 uint64_t big_int::coefficient_size() const
 {
-    //First if there are more than 1 coefficient need to shrink, in case there are extra 0 coefficients **TODO**
     return coefficient.size();
 }
 
@@ -128,6 +130,7 @@ big_int &big_int::operator=(const big_int &big_integer)
         return *this;
     }
 
+    // Set the coefficient and integer_sing of this object to that of argument
     coefficient = big_integer.coefficient;
     integer_sign = big_integer.get_sign();
 
@@ -140,6 +143,7 @@ void big_int::multiply_32(const uint32_t &integer)
     uint64_t carry = 0;
     for (uint64_t &digit : coefficient)
     {
+        // Multiply each digit with the integer and add any carry from previous multiplication
         uint64_t temp = (digit * integer) + carry;
         digit = temp & (uint64_t)UINT32_MAX; //Keep the lower 32 bits as the value for the coefficient digit
         carry = temp >> 32;                  // Assign value of the carry by shifting temp value to the right by 32;
@@ -157,14 +161,14 @@ void big_int::add_32(const uint32_t &integer)
     // Add integer to only the very first coefficient (since the integer is only 32 bits)
     uint64_t temp = coefficient[0] + integer;
     coefficient[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
-    uint64_t carry = temp >> 32;                  // shift temp to the right by 32 bits to get the carry bit
+    uint64_t carry = temp >> 32;                  // shift temp to the right by 32 bits to get the carry
 
     // Check if a carry exists and update next coefficient until carry = 0 or until the end of the coefficient vector
     for (uint64_t i = 1; i < coefficient.size() && carry != 0; i++)
     {
         uint64_t temp = coefficient[i] + carry;
-        coefficient[i] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
-        carry = temp >> 32;                           // shift temp to the right by 32 bits to get the carry bit
+        coefficient[i] = temp & (uint64_t)UINT32_MAX;
+        carry = temp >> 32;
     }
 
     // If the carry is not 0, need to add a new coefficient with the value of carry
@@ -178,7 +182,8 @@ void big_int::divide_32(const uint32_t &integer)
 {
 
     uint64_t remainder = 0;
-    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed
+    // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
+    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed TODO OPTIMIZATION**
     {
         uint64_t temp = base * remainder + coefficient[i];
         coefficient[i] = temp / integer;
@@ -189,7 +194,8 @@ void big_int::divide_32(const uint32_t &integer)
 uint64_t big_int::remainder_32(const uint32_t &integer) const
 {
     uint64_t remainder = 0;
-    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed
+    // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
+    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed TODO OPTIMIZATION**
     {
         uint64_t temp = base * remainder + coefficient[i];
         remainder = temp % integer;
@@ -214,7 +220,7 @@ vector<uint64_t> big_int::radix_complement() const
     complement[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
     uint64_t carry = temp >> 32;
 
-    // If a carry exists add it to the next element in vector if it exist
+    // If a carry exists add it to the next element in vector if it exist and recheck
     for (uint64_t i = 1; i < complement.size() && carry != 0; i++)
     {
         uint64_t temp = complement[i] + carry;
@@ -241,9 +247,10 @@ void big_int::expand(uint64_t const &num_zeros)
 
 void big_int::shrink()
 {
-
+    // Do not shrink if value is 0 with only one digit
     if (coefficient.size() > 1)
     {
+        // Remove all leading zeros until reach a digit that is not zero
         bool number_reached = false;
         for (uint64_t i = coefficient.size() - 1; i > 0 && !number_reached; i--)
         {
@@ -272,7 +279,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         // Change the sign of sum big int to negative
         sum.integer_sign = sign::NEGATIVE;
     }
-
+    // TODO: optimize the following  two else if statements
     else if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
     {
         // add radix of a and b coefficient
@@ -289,7 +296,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         {
             uint64_t size = int_a.coefficient_size();
             // Loop through each digit until find that one is bigger than the other
-            for (int64_t index = size - 1; index >= 0; index--) /****** Check into if need to optimize since can't use unsigned int**********/
+            for (int64_t index = size - 1; index >= 0; index--) /****** TODO : Check into if need to optimize since can't use unsigned int**********/
             {
                 // set sign to negative and set digits to the radix complement
                 if (int_a.coefficient[index] > int_b.coefficient[index])
@@ -327,7 +334,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         {
             uint64_t size = int_a.coefficient_size();
             // Loop through each digit until find that one is bigger than the other
-            for (int64_t index = size - 1; index >= 0; index--) /****** Check into if need to optimize since can't use unsigned int**********/
+            for (int64_t index = size - 1; index >= 0; index--) /****** TODO : Check into if need to optimize since can't use unsigned int**********/
             {
                 // set sign to negative and set digits to the radix complement
                 if (int_a.coefficient[index] < int_b.coefficient[index])
@@ -421,18 +428,23 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
     {
         return quotient;
     }
-    // if divisor equals 1 ***TODO***
+    // if divisor equals 1 ***Optimization TODO***
 
+    // set the remainder big_int to the 1st divisor_size - 1 digits of the dividend
     big_int remainder;
     remainder.coefficient.erase(remainder.coefficient.begin());
     for (uint64_t index = dividend_size - 1 - (divisor_size - 2); index < dividend_size; index++)
     {
         remainder.coefficient.push_back(dividend.coefficient[index]);
     }
+
+    //Long Division
     for (uint64_t i = 0; i < dividend_size - divisor_size + 1; i++)
     {
+        //Add the next digit of the dividend as the least significant digit of the remainder
         remainder.coefficient.insert(remainder.coefficient.begin(), dividend.coefficient[dividend_size - divisor_size - i]);
 
+        //Find the number to times the divisor can got into the remainder value (the count)
         uint64_t count = 0;
         big_int sub = remainder - divisor;
         while (sub.get_sign() == sign::POSITIVE)
@@ -441,9 +453,11 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
             sub = sub - divisor;
         }
 
+        // Subtract divisor*count from the remainder   ***Optimization TODO - maybe just set remainder to sub + divisor
         for (uint64_t update = 0; update < count; update++)
             remainder = remainder - divisor;
 
+        // Add the count as the next least significant digit of the quotient
         quotient.coefficient.insert(quotient.coefficient.begin(), count);
     }
 
@@ -471,7 +485,7 @@ string print_base10(const big_int &integer)
     {
         base10 << copy.remainder_32(10);
         copy.divide_32(10);
-        copy.shrink();
+        copy.shrink(); // remove extra zeros
     } while (copy.at(0) != 0);
 
     // add sign of big integer to string
@@ -574,7 +588,7 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
         carry = temp >> 32;
     }
 
-    // if the coefficient vectors of int_a and int_b are not the same, add the extra coefficients plus the carry to the new big int
+    // if the coefficient vectors of int_a and int_b are not the same, add the extra coefficients of bigger big_int plus the carry to the new big int
     if (vec1_size < vec2_size)
     {
         for (uint64_t i = vec1_size; i < vec2_size; i++)

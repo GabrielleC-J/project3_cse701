@@ -308,14 +308,20 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
                 // remove the extra carry digit of 1 if a < b, due to radix complement
                 else if (int_a.coefficient[index] < int_b.coefficient[index])
                 {
-                    sum.coefficient.pop_back();
+                    sum.shrink();
+                    sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
+                    sum.shrink();
                     break;
                 }
             }
         }
         // need to remove extra leading digit added by using radix complement since negative int is smaller
         else
-            sum.coefficient.pop_back();
+        {
+            sum.shrink();
+            sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
+            sum.shrink();
+        }
     }
 
     else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign ::NEGATIVE)
@@ -346,14 +352,20 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
                 // remove the extra carry digit of 1 if a < b, due to radix complement
                 else if (int_a.coefficient[index] > int_b.coefficient[index])
                 {
-                    sum.coefficient.pop_back();
+                    sum.shrink();
+                    sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
+                    sum.shrink();
                     break;
                 }
             }
         }
         // need to remove extra leading digit added by using radix complement since negative int is smaller
         else
-            sum.coefficient.pop_back();
+        {
+            sum.shrink();
+            sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
+            sum.shrink();
+        }
     }
     else
     {

@@ -439,7 +439,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
         remainder.coefficient.push_back(dividend.coefficient[index]);
     }
 
-    //Long Division
+    //Long Division as if two positive integers
     for (uint64_t i = 0; i < dividend_size - divisor_size + 1; i++)
     {
         //Add the next digit of the dividend as the least significant digit of the remainder
@@ -447,16 +447,31 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
 
         //Find the number to times the divisor can got into the remainder value (the count)
         uint64_t count = 0;
-        big_int sub = remainder - divisor;
-        while (sub.get_sign() == sign::POSITIVE)
+        // Account for negative divisor and the subtraction
+        if (divisor.get_sign() == sign::NEGATIVE)
         {
-            count++;
-            sub = sub - divisor;
-        }
+            big_int sub = remainder + divisor;
+            while (sub.get_sign() == sign::POSITIVE)
+            {
+                count++;
+                sub = sub + divisor;
+            }
 
-        // Subtract divisor*count from the remainder   ***Optimization TODO - maybe just set remainder to sub + divisor
-        for (uint64_t update = 0; update < count; update++)
-            remainder = remainder - divisor;
+            remainder = sub - divisor;
+        }
+        // if divisor is positive, then do regular long division
+        else
+        {
+            big_int sub = remainder - divisor;
+            while (sub.get_sign() == sign::POSITIVE)
+            {
+                count++;
+                sub = sub - divisor;
+            }
+
+            // Set remainder to be previous remainder - dividend*count
+            remainder = sub + divisor;
+        }
 
         // Add the count as the next least significant digit of the quotient
         quotient.coefficient.insert(quotient.coefficient.begin(), count);
@@ -469,7 +484,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
     }
     else if (dividend.get_sign() == sign::POSITIVE && divisor.get_sign() == sign::NEGATIVE)
     {
-        quotient.integer_sign = sign::POSITIVE;
+        quotient.integer_sign = sign::NEGATIVE;
     }
 
     return quotient;

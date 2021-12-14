@@ -249,7 +249,7 @@ void check_division(ofstream &file)
     big_int small_1(95);
     big_int small_2(6);
     big_int pos_1("56789738193238029839");
-    big_int pos_2("893293838329");
+    big_int pos_2("893293838329865");
     big_int pos_3("339475993");
     big_int neg_1("-464836");
     big_int neg_2("-63573848");
@@ -279,11 +279,9 @@ void check_division(ofstream &file)
 
     file << "Checking division for positive dividend and negative divisor integers ...";
     check("-5" == print_base10(pos_3 / neg_2), file);
-    //BUG: if divisor is negative, get stuck in the while loop
 
     file << "Checking division of two positive numbers ...";
     check("+63573" == print_base10(pos_1 / pos_2), file);
-    //BUG: glitch found when the big_ints have more than one digit in base 32
 }
 
 /**

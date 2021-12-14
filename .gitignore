@@ -1,3 +1,6 @@
 # Don't track the following contents
 build/
 .vscode/
+
+# Don't track log files
+log*

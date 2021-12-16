@@ -350,10 +350,11 @@ int main()
     while (filesystem::exists(out_path))
     {
         log_file = log_file_name + "_" + to_string(file_num) + log_file_type;
-        file_path = "../" + log_file;
+        file_path = log_file;
         out_path.replace_filename(file_path);
         file_num += 1;
     }
+    file_path = "../" + file_path;
 
     // Open log file and check to ensure it opens
     ofstream log(file_path, ios::app);

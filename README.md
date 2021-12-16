@@ -20,7 +20,7 @@ Therefore this library was made in order to allow for any integer of any precisi
 
 ## Library Basic Features
 
-This library creates a type called `big_int` and can model signed integers, thus both negative and positive integers can be portrayed. ***Input something about maximum size due to space on computer***
+This library creates a type called `big_int` and can model signed integers, thus both negative and positive integers can be portrayed. 
 
 The operations that can occur on "big_int"s in the library are:
 * addition

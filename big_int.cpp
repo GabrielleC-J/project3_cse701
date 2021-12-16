@@ -83,11 +83,10 @@ big_int::big_int(const vector<uint32_t> &vec)
 {
     // Reverse the vector such that the most significant digit is at the last index
     coefficient.reserve(vec.size());
-    for (uint64_t i = vec.size() - 1; i > 0; i--)
+    for (uint64_t i = vec.size(); i > 0; i--)
     {
-        coefficient.push_back(vec[i]);
+        coefficient.push_back(vec[i - 1]);
     }
-    coefficient.push_back(vec[0]);
 }
 
 /******************************** Public Functions ******************************/
@@ -567,17 +566,17 @@ bool operator<(const big_int &int_a, const big_int &int_b)
     // If digits are the same move to next digit
     bool flag = false;
     bool same_value = true;
-    for (int64_t i = a_size - 1; i >= 0; i--)
+    for (uint64_t i = a_size; i > 0; i--)
     {
         // Check if digit of a is < digit of b
-        if (int_a.at(i) < int_b.at(i))
+        if (int_a.at(i - 1) < int_b.at(i - 1))
         {
             flag = true;
             same_value = false;
             break;
         }
         // Check if digit of a > digit of b
-        else if (int_a.at(i) > int_b.at(i))
+        else if (int_a.at(i - 1) > int_b.at(i - 1))
         {
             flag = false;
             same_value = false;

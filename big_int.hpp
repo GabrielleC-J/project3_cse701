@@ -111,7 +111,7 @@ public:
      *          via vector vector::at()
      * @param index the index to find the coefficient at
      */
-    const uint64_t &at(const uint64_t &index) const;
+    const uint32_t &at(const uint64_t &index) const;
 
     /**
      * @brief Gets the number of coefficients in the big integer
@@ -134,7 +134,7 @@ public:
 
 private:
     // List containing all coefficients for the big number starting with least significant at index 0
-    vector<uint64_t> coefficient;
+    vector<uint32_t> coefficient;
 
     // Type sign that indications the sign of the integer (positive or negative)
     sign integer_sign = sign::POSITIVE;
@@ -180,14 +180,14 @@ private:
      * @param integer a 32 bit integer
      * @return integer indicating the remainder
      */
-    uint64_t remainder_32(const uint32_t &integer) const;
+    uint32_t remainder_32(const uint32_t &integer) const;
 
     /**
      * @brief Finds the radix complement of the big integer where the radix is 2^32
      * @details This will be used for addition
-     * @return a vector of unsigned 64 bit integers representing the radix complement of the big int
+     * @return a vector of unsigned 32 bit integers representing the radix complement of the big int
      */
-    vector<uint64_t> radix_complement() const;
+    vector<uint32_t> radix_complement() const;
 };
 
 /***************************** Exceptions ***************************/
@@ -257,4 +257,4 @@ bool operator==(const big_int &int_a, const big_int &int_b);
  * @param vec2 Vector of coefficients
  * @return a vector of 64 bit integers representing the sum of the two vectors
  */
-vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2);
+vector<uint32_t> add_coefficients(const vector<uint32_t> &vec1, const vector<uint32_t> &vec2);

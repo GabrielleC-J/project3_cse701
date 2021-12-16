@@ -38,7 +38,7 @@ The operations that can occur on "big_int"s in the library are:
 Utilizing the form specified in the background information for integers, instead of storing integers in base 10, this library will store the integers in base $2^{32}$ to save memory space.
 
 ### Data Structure for Digits storage
-The data structure used to store the digits is a vector of unsigned 64 bit integers called coefficients: `vector<uint64_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, each digit will be an unsigned 64 bit integer (rather than using an unsigned 32 bit integer) since each coefficient/digit can only have a value less than the base.
+The data structure used to store the digits is a vector of unsigned 32 bit integers called coefficients: `vector<uint32_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, these operations will use 64 bit intermediate values in order to find the carry values since each coefficient/digit can only have a value less than the base.
 
 The storage of the digits will be in little endian form, thus the least significant digit(LSD) will be at index 0 in the vector and the most significant digit(MSD) will be at index (vector_size - 1). This storage method makes it easier for the addition, subtraction and multiplication operations.
 

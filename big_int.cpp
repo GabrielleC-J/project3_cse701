@@ -28,12 +28,12 @@ big_int::big_int(const int64_t &integer)
     }
 
     // Divide by base of 2^32 and add remainder to the coefficient vector of digits
-    uint64_t remainder = value % base;
+    uint32_t remainder = (uint32_t)(value % base);
     coefficient.push_back(remainder);
     while (value > base)
     {
         value = value / base;
-        remainder = value % base;
+        remainder = (uint32_t)(value % base); // remainder always < base
         coefficient.push_back(remainder);
     }
 }
@@ -70,7 +70,7 @@ big_int::big_int(const string &integer) : coefficient((1))
 big_int::big_int(const big_int &big_integer)
 {
     // Copy the digits of the argument big integer
-    for (const uint64_t &digits : big_integer.coefficient) // ***TODO: See if breaks encapsulation***
+    for (const uint32_t &digits : big_integer.coefficient) // ***TODO: See if breaks encapsulation***
     {
         coefficient.push_back(digits);
     }
@@ -104,7 +104,7 @@ void big_int::negate()
     }
 }
 
-const uint64_t &big_int::at(const uint64_t &index) const
+const uint32_t &big_int::at(const uint64_t &index) const
 {
     return coefficient.at(index);
 }
@@ -140,40 +140,40 @@ big_int &big_int::operator=(const big_int &big_integer)
 void big_int::multiply_32(const uint32_t &integer)
 {
     uint64_t carry = 0;
-    for (uint64_t &digit : coefficient)
+    for (uint32_t &digit : coefficient)
     {
         // Multiply each digit with the integer and add any carry from previous multiplication
-        uint64_t temp = (digit * integer) + carry;
-        digit = temp & (uint64_t)UINT32_MAX; //Keep the lower 32 bits as the value for the coefficient digit
-        carry = temp >> 32;                  // Assign value of the carry by shifting temp value to the right by 32;
+        uint64_t temp = (digit * (uint64_t)integer) + carry;
+        digit = (uint32_t)(temp & (uint64_t)UINT32_MAX); //Keep the lower 32 bits as the value for the coefficient digit
+        carry = temp >> 32;                              // Assign value of the carry by shifting temp value to the right by 32;
     }
 
     // Check to see if carry at the end is 0, if not add new coefficient to vector of coefficients
     if (carry != 0)
     {
-        coefficient.push_back(carry);
+        coefficient.push_back((uint32_t)carry);
     }
 }
 
 void big_int::add_32(const uint32_t &integer)
 {
     // Add integer to only the very first coefficient (since the integer is only 32 bits)
-    uint64_t temp = coefficient[0] + integer;
-    coefficient[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
-    uint64_t carry = temp >> 32;                  // shift temp to the right by 32 bits to get the carry
+    uint64_t temp = coefficient[0] + (uint64_t)integer;
+    coefficient[0] = (uint32_t)(temp & (uint64_t)UINT32_MAX); // keep the low 32 bits
+    uint64_t carry = temp >> 32;                              // shift temp to the right by 32 bits to get the carry
 
     // Check if a carry exists and update next coefficient until carry = 0 or until the end of the coefficient vector
     for (uint64_t i = 1; i < coefficient.size() && carry != 0; i++)
     {
         uint64_t temp = coefficient[i] + carry;
-        coefficient[i] = temp & (uint64_t)UINT32_MAX;
+        coefficient[i] = (uint32_t)(temp & (uint64_t)UINT32_MAX);
         carry = temp >> 32;
     }
 
     // If the carry is not 0, need to add a new coefficient with the value of carry
     if (carry != 0)
     {
-        coefficient.push_back(carry);
+        coefficient.push_back((uint32_t)carry);
     }
 }
 
@@ -185,12 +185,12 @@ void big_int::divide_32(const uint32_t &integer)
     for (uint64_t i = coefficient.size(); i > 0; i--)
     {
         uint64_t temp = base * remainder + coefficient[i - 1];
-        coefficient[i - 1] = temp / integer;
+        coefficient[i - 1] = (uint32_t)(temp / integer);
         remainder = temp % integer;
     }
 }
 
-uint64_t big_int::remainder_32(const uint32_t &integer) const
+uint32_t big_int::remainder_32(const uint32_t &integer) const
 {
     uint64_t remainder = 0;
     // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
@@ -199,38 +199,38 @@ uint64_t big_int::remainder_32(const uint32_t &integer) const
         uint64_t temp = base * remainder + coefficient[i - 1];
         remainder = temp % integer;
     }
-    return remainder;
+    return (uint32_t)remainder;
 }
 
-vector<uint64_t> big_int::radix_complement() const
+vector<uint32_t> big_int::radix_complement() const
 {
-    vector<uint64_t> complement;
+    vector<uint32_t> complement;
     // Ged the radix - 1
-    uint64_t radix_minus1 = base - 1;
+    uint32_t radix_minus1 = (uint32_t)(base - 1);
 
     // Find radix - 1 complement and then add 1 to get radix complement
-    for (const uint64_t &digit : coefficient)
+    for (const uint32_t &digit : coefficient)
     {
         complement.push_back(radix_minus1 - digit);
     }
 
     // Add 1 to the big int and check carry
     uint64_t temp = complement[0] + 1;
-    complement[0] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
+    complement[0] = (uint32_t)(temp & (uint64_t)UINT32_MAX); // keep the low 32 bits
     uint64_t carry = temp >> 32;
 
     // If a carry exists add it to the next element in vector if it exist and recheck
     for (uint64_t i = 1; i < complement.size() && carry != 0; i++)
     {
         uint64_t temp = complement[i] + carry;
-        complement[i] = temp & (uint64_t)UINT32_MAX; // keep the low 32 bits
-        carry = temp >> 32;                          // shift temp to the right by 32 bits to get the carry bit
+        complement[i] = (uint32_t)(temp & (uint64_t)UINT32_MAX); // keep the low 32 bits
+        carry = temp >> 32;                                      // shift temp to the right by 32 bits to get the carry bit
     }
 
     // If the carry is not 0, need to add a new element with the value of carry
     if (carry != 0)
     {
-        complement.push_back(carry);
+        complement.push_back((uint32_t)carry);
     }
 
     return complement;
@@ -393,22 +393,22 @@ big_int operator*(const big_int &int_a, const big_int &int_b)
         // multiply digit of int_a by each digit of int_b and add to the product big_int at index (i+j) if it exists
         for (uint64_t j = 0; j < int_b.coefficient_size() && (i + j) < product.coefficient_size(); j++)
         {
-            uint64_t temp = (int_a.coefficient[i] * int_b.coefficient[j]) + carry + product.coefficient[i + j];
-            product.coefficient[i + j] = temp & (uint64_t)(UINT32_MAX);
+            uint64_t temp = (int_a.coefficient[i] * (uint64_t)int_b.coefficient[j]) + carry + product.coefficient[i + j];
+            product.coefficient[i + j] = (uint32_t)(temp & (uint64_t)(UINT32_MAX));
             carry = temp >> 32;
         }
         // if the product big int coefficient vector is not long enough start adding new coefficients with the value product + carry
         for (uint64_t k = product.coefficient_size(); k < int_b.coefficient_size(); k++)
         {
-            uint64_t temp = (int_a.coefficient[i] * int_b.coefficient[k]) + carry;
-            product.coefficient.push_back(temp & (uint64_t)(UINT32_MAX));
+            uint64_t temp = (int_a.coefficient[i] * (uint64_t)int_b.coefficient[k]) + carry;
+            product.coefficient.push_back((uint32_t)(temp & (uint64_t)(UINT32_MAX)));
             carry = temp >> 32;
         }
 
         //add new coefficient with carry if any
         if (carry != 0)
         {
-            product.coefficient.push_back(carry);
+            product.coefficient.push_back((uint32_t)carry);
         }
     }
 
@@ -459,7 +459,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
         remainder.coefficient.insert(remainder.coefficient.begin(), dividend.coefficient[dividend_size - divisor_size - i]);
 
         //Find the number to times the divisor can got into the remainder value (the count)
-        uint64_t count = 0;
+        uint32_t count = 0;
         // Account for negative divisor and the subtraction
         if (divisor.get_sign() == sign::NEGATIVE)
         {
@@ -623,9 +623,9 @@ bool operator==(const big_int &int_a, const big_int &int_b)
     return !(int_a != int_b);
 }
 
-vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uint64_t> &vec2)
+vector<uint32_t> add_coefficients(const vector<uint32_t> &vec1, const vector<uint32_t> &vec2)
 {
-    vector<uint64_t> sum;
+    vector<uint32_t> sum;
     uint64_t vec1_size = vec1.size();
     uint64_t vec2_size = vec2.size();
     uint64_t carry = 0;
@@ -634,8 +634,8 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
     //For the rest of the coefficients add them and then carry (until the end of smallest coefficient vector)
     for (uint64_t i = 0; i < vec1_size && i < vec2_size; i++)
     {
-        temp = vec1[i] + vec2[i] + carry;
-        sum.push_back(temp & (uint64_t)UINT32_MAX);
+        temp = carry + vec1[i] + vec2[i];
+        sum.push_back((uint32_t)(temp & (uint64_t)UINT32_MAX));
         carry = temp >> 32;
     }
 
@@ -645,7 +645,7 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
         for (uint64_t i = vec1_size; i < vec2_size; i++)
         {
             temp = vec2[i] + carry;
-            sum.push_back(temp & (uint64_t)UINT32_MAX);
+            sum.push_back((uint32_t)(temp & (uint64_t)UINT32_MAX));
             carry = temp >> 32;
         }
     }
@@ -654,7 +654,7 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
         for (uint64_t i = vec2_size; i < vec1_size; i++)
         {
             temp = vec1[i] + carry;
-            sum.push_back(temp & (uint64_t)UINT32_MAX);
+            sum.push_back((uint32_t)(temp & (uint64_t)UINT32_MAX));
             carry = temp >> 32;
         }
     }
@@ -662,7 +662,7 @@ vector<uint64_t> add_coefficients(const vector<uint64_t> &vec1, const vector<uin
     // Check to see if there is a carry left over
     if (carry != 0)
     {
-        sum.push_back(carry);
+        sum.push_back((uint32_t)carry);
     }
 
     return sum;

@@ -1,7 +1,7 @@
 /**
  * @file BigInt.cpp
  * @author Gabrielle Ching-Johnson
- * @brief
+ * @brief C++ code file for arbitrary precision integer arithmetic
  * @version 0.1
  * @date Dec 11, 2021
  */
@@ -41,7 +41,7 @@ big_int::big_int(const int64_t &integer)
 big_int::big_int(const string &integer) : coefficient((1))
 {
     string integer_temp = integer;
-    // Check to see if 1st digit is a "+" or "-" sign and remove                    ** OPTIMIZATION: maybe shouldn't erase and should just use a substring instead of copying in the beginning **
+    // Check to see if 1st digit is a "+" or "-" sign and remove
     if (integer[0] == '+')
     {
         integer_sign = sign::POSITIVE;

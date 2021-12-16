@@ -343,7 +343,7 @@ int main()
     string log_file_name = "log_file_big_int_tests";
     string log_file_type = ".txt";
     string log_file = log_file_name + log_file_type;
-    string file_path = "../" + log_file;
+    string file_path = log_file;
     filesystem::path out_path(file_path);
     int file_num = 1;
     string original_log_file = log_file;
@@ -354,7 +354,6 @@ int main()
         out_path.replace_filename(file_path);
         file_num += 1;
     }
-    file_path = "../" + file_path;
 
     // Open log file and check to ensure it opens
     ofstream log(file_path, ios::app);

@@ -183,10 +183,10 @@ void big_int::divide_32(const uint32_t &integer)
 
     uint64_t remainder = 0;
     // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
-    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed TODO OPTIMIZATION**
+    for (uint64_t i = coefficient.size(); i > 0; i--)
     {
-        uint64_t temp = base * remainder + coefficient[i];
-        coefficient[i] = temp / integer;
+        uint64_t temp = base * remainder + coefficient[i - 1];
+        coefficient[i - 1] = temp / integer;
         remainder = temp % integer;
     }
 }
@@ -195,9 +195,9 @@ uint64_t big_int::remainder_32(const uint32_t &integer) const
 {
     uint64_t remainder = 0;
     // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
-    for (int64_t i = coefficient.size() - 1; i >= 0; i--) //**Look into, as had to change i to signed TODO OPTIMIZATION**
+    for (uint64_t i = coefficient.size(); i > 0; i--)
     {
-        uint64_t temp = base * remainder + coefficient[i];
+        uint64_t temp = base * remainder + coefficient[i - 1];
         remainder = temp % integer;
     }
     return remainder;
@@ -271,6 +271,7 @@ void big_int::shrink()
 big_int operator+(const big_int &int_a, const big_int &int_b)
 {
     big_int sum;
+    // Both integers are negative case
     if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign ::NEGATIVE)
     {
         // add the two big integers (no need for radix complement since both negative)
@@ -295,18 +296,18 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
             uint64_t size = int_a.coefficient_size();
-            // Loop through each digit until find that one is bigger than the other
-            for (int64_t index = size - 1; index >= 0; index--) /****** TODO : Check into if need to optimize since can't use unsigned int**********/
+            // Loop through each digit until find one that is bigger than the other, indicating which int is bigger overall
+            for (uint64_t index = size; index > 0; index--)
             {
                 // set sign to negative and set digits to the radix complement
-                if (int_a.coefficient[index] > int_b.coefficient[index])
+                if (int_a.coefficient[index - 1] > int_b.coefficient[index - 1])
                 {
                     sum.integer_sign = sign::NEGATIVE;
                     sum.coefficient = sum.radix_complement();
                     break;
                 }
                 // remove the extra carry digit of 1 if a < b, due to radix complement
-                else if (int_a.coefficient[index] < int_b.coefficient[index])
+                else if (int_a.coefficient[index - 1] < int_b.coefficient[index - 1])
                 {
                     sum.shrink();
                     sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
@@ -323,7 +324,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
             sum.shrink();
         }
     }
-
+    // One int is positive and other is negative
     else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign ::NEGATIVE)
     {
         // add a coefficient and radix of b
@@ -339,18 +340,18 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         else if (int_a.coefficient_size() == int_b.coefficient_size())
         {
             uint64_t size = int_a.coefficient_size();
-            // Loop through each digit until find that one is bigger than the other
-            for (int64_t index = size - 1; index >= 0; index--) /****** TODO : Check into if need to optimize since can't use unsigned int**********/
+            // Loop through each digit until find one that is bigger than the other, indicating which int is bigger overall
+            for (uint64_t index = size; index > 0; index--)
             {
                 // set sign to negative and set digits to the radix complement
-                if (int_a.coefficient[index] < int_b.coefficient[index])
+                if (int_a.coefficient[index - 1] < int_b.coefficient[index - 1])
                 {
                     sum.integer_sign = sign::NEGATIVE;
                     sum.coefficient = sum.radix_complement();
                     break;
                 }
                 // remove the extra carry digit of 1 if a < b, due to radix complement
-                else if (int_a.coefficient[index] > int_b.coefficient[index])
+                else if (int_a.coefficient[index - 1] > int_b.coefficient[index - 1])
                 {
                     sum.shrink();
                     sum.coefficient[sum.coefficient_size() - 1] = sum.coefficient[sum.coefficient_size() - 1] - 1;
@@ -367,6 +368,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
             sum.shrink();
         }
     }
+    // both integers are positive case
     else
     {
         // add the coefficients of both a and b, no need to change sign of sum

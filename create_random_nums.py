@@ -2,14 +2,17 @@
 # @date 17 Dec 2021
 # @brief This is a script that chooses 4 random big integers and finds solutions to arithmetic operations
 
+import random
 
 file_name = "test_input.txt"
 
 # chose four random numbers 
-pos1 = 87
-pos2 = 79
-neg1 = -273
-neg2= -7393
+max = 2**1024 + 1
+min = -2**1024
+pos1 = random.randint(0,max + 1)
+pos2 = random.randint(0,max + 1)
+neg1 = random.randint(min, 0)
+neg2 = random.randint(min, 0)
 
 numbers = [pos1, pos2, neg1, neg2]
 

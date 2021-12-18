@@ -219,30 +219,16 @@ void check_subtraction_negation(vector<big_int> numbers, vector<string> differen
 /**
  * @brief Tests the multiplication operator overload for big integer
  */
-void check_multiplication(ofstream &file)
+void check_multiplication(vector<big_int> numbers, vector<string> products, ofstream &file)
 {
-    big_int small_1(98);
-    big_int small_2(4);
-    string small_sol = "+392";
-    big_int pos_1("7657346809103847");
-    big_int pos_2("675335738394");
-    string two_pos_solution = "+5171279961465086275171001718"; // pos_1*pos_2
-    big_int neg_1(-50);
-    big_int neg_2("-394785643744");
-    string two_neg_sol = "+19739282187200";               // neg_1*neg_2
-    string neg_pos_sol = "-3023010589403126517641883168"; // pos_1 * neg_2
-
-    file << "Checking multiplication of basic integers ...";
-    check(small_sol == print_base10(small_1 * small_2), file);
-
     file << "checking the multiplication of two positive big numbers ...";
-    check(two_pos_solution == print_base10(pos_1 * pos_2), file);
+    check(products[0] == print_base10(numbers[0] * numbers[1]), file);
 
     file << "Checking the multiplication of two negative big integers ...";
-    check(two_neg_sol == print_base10(neg_1 * neg_2), file);
+    check(products[1] == print_base10(numbers[2] * numbers[3]), file);
 
     file << "Checking the multiplication of a negative and positive big integer ...";
-    check(neg_pos_sol == print_base10(pos_1 * neg_2), file);
+    check(products[2] == print_base10(numbers[0] * numbers[2]), file);
 }
 
 /**
@@ -250,18 +236,10 @@ void check_multiplication(ofstream &file)
  */
 void check_division(ofstream &file)
 {
-    big_int small_1(95);
-    big_int small_2(6);
     big_int pos_1("56789738193238029839");
-    big_int pos_2("893293838329865");
-    big_int pos_3("339475993");
     big_int neg_1("-464836");
-    big_int neg_2("-63573848");
 
-    file << "Checking division for basic integers ...";
-    check("+15" == print_base10(small_1 / small_2), file);
-
-    file << "Checking division for dividend < divisor ...";
+    file << "Checking division for dividend value < divisor value ...";
     check("+0" == print_base10(neg_1 / pos_2), file);
 
     file << "Checking division by zero exception thrown ...";
@@ -527,7 +505,7 @@ int main()
 
     log << "\n***********Testing multiplication of the big_int class:***********\n";
     cout << "Testing Multiplication\n";
-    check_multiplication(log);
+    check_multiplication(big_numbers, products, log);
     number_tests_passed(log);
     update_counters();
 

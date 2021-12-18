@@ -184,7 +184,7 @@ void big_int::divide_32(const uint32_t &integer)
     // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
     for (uint64_t i = coefficient.size(); i > 0; i--)
     {
-        uint64_t temp = base * remainder + coefficient[i - 1];
+        uint64_t temp = (base * remainder) + coefficient[i - 1];
         coefficient[i - 1] = (uint32_t)(temp / integer);
         remainder = temp % integer;
     }
@@ -196,9 +196,10 @@ uint32_t big_int::remainder_32(const uint32_t &integer) const
     // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
     for (uint64_t i = coefficient.size(); i > 0; i--)
     {
-        uint64_t temp = base * remainder + coefficient[i - 1];
+        uint64_t temp = (base * remainder) + coefficient[i - 1];
         remainder = temp % integer;
     }
+    // remainder will always be less than integer thus cast as 32 bit
     return (uint32_t)remainder;
 }
 
@@ -279,7 +280,8 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         // Change the sign of sum big int to negative
         sum.integer_sign = sign::NEGATIVE;
     }
-    // TODO: optimize the following  two else if statements
+
+    // first int is negative and 2nd is positive
     else if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign::POSITIVE)
     {
         // add radix of a and b coefficient
@@ -634,7 +636,7 @@ vector<uint32_t> add_coefficients(const vector<uint32_t> &vec1, const vector<uin
     //For the rest of the coefficients add them and then carry (until the end of smallest coefficient vector)
     for (uint64_t i = 0; i < vec1_size && i < vec2_size; i++)
     {
-        temp = carry + vec1[i] + vec2[i];
+        temp = (vec1[i] + (uint64_t)vec2[i]) + carry;
         sum.push_back((uint32_t)(temp & (uint64_t)UINT32_MAX));
         carry = temp >> 32;
     }

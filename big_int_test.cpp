@@ -2,7 +2,7 @@
  * @file big_int_test.cpp
  * @author Gabrielle Ching-Johnson
  * @brief This file runs unit tests for the big_int class
- * @version 0.1
+ * @version 0.2
  * @date Dec 12, 2021
  */
 
@@ -150,66 +150,70 @@ void check_string_constructor(ofstream &file)
 /**
  * @brief Tests for the print function of a big integer
  */
-void check_print(ofstream &file)
+void check_print(const vector<string> &numbers, ofstream &file)
 {
-    string pos_int = "+12345678987654321";
-    string neg_int = "-98765432123456789";
-    big_int positive(pos_int);
-    big_int negative(neg_int);
+    string exact_pos;
+    if (numbers[0].at(0) != '+')
+    {
+        exact_pos = "+" + numbers[0];
+    }
+    else
+    {
+        exact_pos = numbers[0];
+    }
+    string exact_neg = numbers[2];
+    big_int positive(numbers[0]);
+    big_int negative(exact_neg);
 
     file << "Check the printing of a positive big integer ...";
-    check(pos_int == print_base10(positive), file);
+    check(exact_pos == print_base10(positive), file);
 
     file << "Check the printing of a negative big integer ...";
-    check(neg_int == print_base10(negative), file);
+    check(exact_neg == print_base10(negative), file);
 }
 
 /**
  * @brief Tests the addition operator overload of a big integer
  */
-void check_addition(ofstream &file)
+void check_addition(const vector<big_int> &numbers, const vector<string> &sum_vals, ofstream &file)
 {
-    big_int small_neg(-45);
-    big_int positive_1("38374635927640");
-    big_int positive_2("63528394639737489393048304");
-    big_int negative_1("-3638493734930473947493");
-
     file << "Check the addition of two positive numbers";
-    big_int sum_pos = positive_1 + positive_2;
-    check("+63528394639775864028975944" == print_base10(sum_pos), file);
+    big_int sum_pos = numbers[0] + numbers[1];
+    check(sum_vals[0] == print_base10(sum_pos), file);
 
     file << "Check the addition of two negative numbers";
-    big_int sum_neg = negative_1 + small_neg;
-    check("-3638493734930473947538" == print_base10(sum_neg), file);
+    big_int sum_neg = numbers[2] + numbers[3];
+    check(sum_vals[1] == print_base10(sum_neg), file);
 
-    file << "Check the addition of a smaller negative value and bigger positive ...";
-    big_int sum_pos_bigger = positive_2 + negative_1;
-    check("+63524756146002558919100811" == print_base10(sum_pos_bigger), file);
+    file << "Check the addition of the 1st random positive and negative value ...";
+    big_int sum_pos_one = numbers[0] + numbers[2];
+    check(sum_vals[2] == print_base10(sum_pos_one), file);
 
-    file << "Check the addition of a bigger negative value and smaller positive ...";
-    big_int sum_neg_bigger = negative_1 + positive_1;
-    check("-3638493696555838019853" == print_base10(sum_neg_bigger), file);
+    file << "Check the addition of the 2nd random negative and positive value ...";
+    big_int sum_neg_two = numbers[1] + numbers[3];
+    check(sum_vals[3] == print_base10(sum_neg_two), file);
 }
 
 /**
  * @brief Tests for the subtraction and negation operator overloads for big integer
  */
-void check_subtraction_negation(ofstream &file)
+void check_subtraction_negation(vector<big_int> numbers, vector<string> differences, ofstream &file)
 {
-    big_int positive(45);
-    big_int positive2(256);
+    file << "Checking the negation operator overload for positive value ...";
+    big_int negative = -numbers[0];
+    check(negative.get_sign() == sign::NEGATIVE, file);
 
-    file << "Checking the negation operator overload ...";
-    big_int negative = -positive;
-    check(negative.get_sign() == sign::NEGATIVE && negative.at(0) == 45, file);
+    file << "Checking subtraction of 2 positive numbers ...";
+    big_int sub = numbers[0] - numbers[1];
+    check(differences[0] == print_base10(sub), file);
 
-    file << "Checking subtraction of 2 positive numbers with the 2nd being bigger ...";
-    big_int sub = positive - positive2;
-    check("-211" == print_base10(sub), file);
+    file << "Checking subtraction of 1st negative and positive random integers ...";
+    big_int sub2 = numbers[2] - numbers[0];
+    check(differences[1] == print_base10(sub2), file);
 
-    file << "Checking subtraction of 2 positive numbers where 2nd is smaller ...";
-    big_int sub2 = positive2 - positive;
-    check("+211" == print_base10(sub2), file);
+    file << "Checking subtraction of 2 negative numbers ...";
+    big_int sub3 = numbers[2] - numbers[3];
+    check(differences[2] == print_base10(sub3), file);
 }
 
 /**
@@ -331,10 +335,14 @@ void check_not_equals_and_equals(ofstream &file)
     check(pos_2 != pos_1, file);
 }
 
+/**
+ * @brief Read input values into desired vector and check for invalid input
+ */
 void read_values(vector<string> &value_vec, const string &line, const uint8_t &line_num)
 {
     string value;
     istringstream line_stream(line);
+    // input each value in line to vector
     while (getline(line_stream, value, ','))
     {
         value_vec.push_back(value);
@@ -357,7 +365,7 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
         }
     }
 
-    // Check all values are numbers in the vector or boolean
+    // Check all values are numbers in the vector or boolean for 6th line
     for (const string &integers : value_vec)
     {
         if (line_num == 6)
@@ -370,10 +378,12 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
         else
         {
             string::const_iterator start = integers.begin();
+            // Check 1st character if + or - sign and move iterator start to next char if sign is there and string is not a single char
             if ((integers[0] == '+' || integers[0] == '-') && integers.size() != 1)
             {
                 start++;
             }
+            // Check rest of the values that they are digits
             if (!all_of(start, integers.end(), ::isdigit))
             {
                 throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + "\n");
@@ -395,12 +405,15 @@ int main()
     }
 
     string input_line;
-    vector<string> numbers;
-    vector<string> sums;
-    vector<string> diffs;
-    vector<string> products;
-    vector<string> quotients;
-    vector<string> greater_less;
+    vector<string> numbers;      // 4 big_int strings
+    vector<big_int> big_numbers; // the 4 big integers as type big_int
+    vector<string> sums;         // sums of the integers
+    vector<string> diffs;        // differences of the integers
+    vector<string> products;     // products of the integers
+    vector<string> quotients;    // quotients of the integers
+    vector<string> greater_less; // boolean for < and >
+
+    // Read lines from input
     try
     {
         uint8_t line_counter = 0;
@@ -441,6 +454,12 @@ int main()
     {
         cout << exception.what();
         return -1;
+    }
+
+    // update the big_int vector with values
+    for (const string &integers : numbers)
+    {
+        big_numbers.push_back(big_int(integers));
     }
 
     /***************************************** Open Log File ********************************************/
@@ -490,19 +509,19 @@ int main()
 
     log << "\n***********Testing printing to a string of the big_int class:***********\n";
     cout << "Testing printing to base 10\n";
-    check_print(log);
+    check_print(numbers, log);
     number_tests_passed(log);
     update_counters();
 
     log << "\n***********Testing addition of the big_int class:***********\n";
     cout << "Testing Addition\n";
-    check_addition(log);
+    check_addition(big_numbers, sums, log);
     number_tests_passed(log);
     update_counters();
 
     log << "\n***********Testing subtraction and negation of the big_int class:***********\n";
     cout << "Testing Subtraction and Negation\n";
-    check_subtraction_negation(log);
+    check_subtraction_negation(big_numbers, diffs, log);
     number_tests_passed(log);
     update_counters();
 

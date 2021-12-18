@@ -15,7 +15,7 @@ numbers = [pos1, pos2, neg1, neg2]
 
 # operations on numbers
 pos_sum = pos1 + pos2
-neg_sum = neg1 - neg2
+neg_sum = neg1 + neg2
 pos_neg_sum = pos1 + neg1
 neg_pos_sum = neg2 + pos2
 
@@ -47,23 +47,23 @@ input_file = open(file_name, "w")
 
 # print 2 positive then 2 negative
 
-input_file.write(",".join(str(i) for i in numbers) + "\n")
+input_file.write(",".join("+" + str(i) if i >= 0 else str(i) for i in numbers) + "\n")
 
 # print addition solutions
 
-input_file.write(",".join(str(i) for i in sums) + "\n")
+input_file.write(",".join("+" + str(i) if i >= 0 else str(i) for i in sums) + "\n")
 
 # print negation and subtraction solutions
 
-input_file.write(",".join(str(i) for i in sub) + "\n")
+input_file.write(",".join("+" + str(i) if i >= 0 else str(i) for i in sub) + "\n")
 
 # print multiplication solutions
 
-input_file.write(",".join(str(i) for i in multiply) + "\n")
+input_file.write(",".join("+" + str(i) if i >= 0 else str(i) for i in multiply) + "\n")
 
 # print division solutions
 
-input_file.write(",".join(str(i) for i in div) + "\n")
+input_file.write(",".join("+" + str(i) if i >= 0 else str(i) for i in div) + "\n")
 
 # print < and > solutions
 

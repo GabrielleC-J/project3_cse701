@@ -33,9 +33,9 @@ mult_pos_neg = pos1 * neg1
 
 multiply = [mult_pos, mult_neg, mult_pos_neg]
 
-div_pos = pos1 // pos2
-div_neg = neg1 // neg2
-div_pos_neg = neg1 // pos1
+div_pos = int(pos1 / pos2)
+div_neg = int(neg1 / neg2)
+div_pos_neg = int(neg1 / pos1)
 
 div = [div_pos, div_neg, div_pos_neg]
 

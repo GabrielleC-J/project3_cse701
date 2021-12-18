@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief This file runs unit tests for the big_int class
  * @version 0.2
- * @date Dec 12, 2021
+ * @date Dec 18, 2021
  */
 
 #include <iostream>
@@ -149,9 +149,12 @@ void check_string_constructor(ofstream &file)
 
 /**
  * @brief Tests for the print function of a big integer
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param file The log file to print results to
  */
 void check_print(const vector<string> &numbers, ofstream &file)
 {
+    // Add the + sign if solution does not contain it
     string exact_pos;
     if (numbers[0].at(0) != '+')
     {
@@ -162,7 +165,7 @@ void check_print(const vector<string> &numbers, ofstream &file)
         exact_pos = numbers[0];
     }
     string exact_neg = numbers[2];
-    big_int positive(numbers[0]);
+    big_int positive(exact_pos);
     big_int negative(exact_neg);
 
     file << "Check the printing of a positive big integer ...";
@@ -174,9 +177,13 @@ void check_print(const vector<string> &numbers, ofstream &file)
 
 /**
  * @brief Tests the addition operator overload of a big integer
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param sum_vals A vector of strings containing the solutions to the summation of big integers
+ * @param file The log file to print results to
  */
 void check_addition(const vector<big_int> &numbers, const vector<string> &sum_vals, ofstream &file)
 {
+    file << "Random Big Integers Tests:\n";
     file << "Check the addition of two positive numbers";
     big_int sum_pos = numbers[0] + numbers[1];
     check(sum_vals[0] == print_base10(sum_pos), file);
@@ -196,9 +203,13 @@ void check_addition(const vector<big_int> &numbers, const vector<string> &sum_va
 
 /**
  * @brief Tests for the subtraction and negation operator overloads for big integer
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param differences A vector of strings containing the solutions to the difference of big integers
+ * @param file The log file to print results to
  */
-void check_subtraction_negation(vector<big_int> numbers, vector<string> differences, ofstream &file)
+void check_subtraction_negation(const vector<big_int> &numbers, const vector<string> &differences, ofstream &file)
 {
+    file << "Random Big Integers Tests:\n";
     file << "Checking the negation operator overload for positive value ...";
     big_int negative = -numbers[0];
     check(negative.get_sign() == sign::NEGATIVE, file);
@@ -218,32 +229,42 @@ void check_subtraction_negation(vector<big_int> numbers, vector<string> differen
 
 /**
  * @brief Tests the multiplication operator overload for big integer
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param products A vector of strings containing the solutions to the multiplication of big integers
+ * @param file The log file to print results to
  */
-void check_multiplication(vector<big_int> numbers, vector<string> products, ofstream &file)
+void check_multiplication(const vector<big_int> &numbers, const vector<string> &products, ofstream &file)
 {
+    file << "Random Big Integers Tests:\n";
     file << "checking the multiplication of two positive big numbers ...";
     check(products[0] == print_base10(numbers[0] * numbers[1]), file);
 
     file << "Checking the multiplication of two negative big integers ...";
     check(products[1] == print_base10(numbers[2] * numbers[3]), file);
 
-    file << "Checking the multiplication of a negative and positive big integer ...";
+    file << "Checking the multiplication of the 1st random negative and positive big integer ...";
     check(products[2] == print_base10(numbers[0] * numbers[2]), file);
 }
 
 /**
  * @brief Test the division operator overload for big integers
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param quotients A vector of strings containing the solutions to the division of big integers
+ * @param file The log file to print results to
  */
-void check_division(vector<big_int> numbers, vector<string> quotients, ofstream &file)
+void check_division(const vector<big_int> &numbers, const vector<string> &quotients, ofstream &file)
 {
-    big_int pos_2("893293838329865");
+    big_int pos_2("893293838329");
     big_int neg_1("-464836");
 
-    file << " Hard Coded tests:\n";
+    file << "Hard Coded tests:\n";
     file << "Checking division for dividend value < divisor value ...";
     check("+0" == print_base10(neg_1 / pos_2), file);
 
-    file << "Random Big Integers Tests:\n";
+    file << "Checking division for dividend > divisor value ...";
+    check("-1921739" == print_base10(pos_2 / neg_1), file);
+
+    file << "\nRandom Big Integers Tests:\n";
 
     file << "Checking division by zero exception thrown ...";
     try
@@ -265,20 +286,28 @@ void check_division(vector<big_int> numbers, vector<string> quotients, ofstream 
     file << "Checking division for  two negative numbers ...";
     check(quotients[1] == print_base10(numbers[2] / numbers[3]), file);
 
-    file << "Checking division of a negative and positive number ...";
+    file << "Checking division of the 1st negative and positive random integer ...";
     check(quotients[2] == print_base10(numbers[2] / numbers[0]), file);
 }
 
 /**
  * @brief Test the < and > operator overload for big integers
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param bool_sols A vector of strings containing the solutions to the comparison of big integers
+ * @param file The log file to print results to
  */
-void check_less_and_greater_than(vector<big_int> numbers, vector<string> bool_sols, ofstream &file)
+void check_less_and_greater_than(const vector<big_int> &numbers, const vector<string> &bool_sols, ofstream &file)
 {
     big_int pos_1("235632");
     big_int more_digits("3764839473947839");
     bool solution;
 
-    file << "Random Big Integers Tests:\n";
+    file << "Hard Coded tests:\n";
+
+    file << "Checking less than for integers with different number of digits in base 2^32 ...";
+    check(pos_1 < more_digits, file);
+
+    file << "\nRandom Big Integers Tests:\n";
     file << "Checking less than for two positive numbers ...";
     istringstream(bool_sols[0]) >> boolalpha >> solution; // convert string solution to boolean
     check(((numbers[0] < numbers[1]) == solution), file);
@@ -294,17 +323,14 @@ void check_less_and_greater_than(vector<big_int> numbers, vector<string> bool_so
     file << "Checking less than for negative and positive numbers ...";
     istringstream(bool_sols[3]) >> boolalpha >> solution; // convert string solution to boolean
     check(((numbers[2] < numbers[0]) == solution), file);
-
-    file << "Hard Coded tests:\n";
-
-    file << "Checking less than for integers with different number of digits in base 2^32 ...";
-    check(pos_1 < more_digits, file);
 }
 
 /**
  * @brief Test != and == operator overload for big integers
+ * @param numbers A vector of 4 big integers, the 1st two are positive and the 2nd two are negative
+ * @param file The log file to print results to
  */
-void check_not_equals_and_equals(vector<big_int> numbers, ofstream &file)
+void check_not_equals_and_equals(const vector<big_int> &numbers, ofstream &file)
 {
 
     file << "Checking equals for the same value ...";
@@ -319,6 +345,7 @@ void check_not_equals_and_equals(vector<big_int> numbers, ofstream &file)
 
 /**
  * @brief Read input values into desired vector and check for invalid input
+ * @param value_vec
  */
 void read_values(vector<string> &value_vec, const string &line, const uint8_t &line_num)
 {
@@ -395,11 +422,11 @@ int main()
     vector<string> quotients;    // quotients of the integers
     vector<string> greater_less; // boolean for < and >
 
-    // Read lines from input
+    // Read 6 lines from input
     try
     {
         uint8_t line_counter = 0;
-        for (uint8_t i = 1; getline(operations_input, input_line) || i < 7; i++)
+        for (uint8_t i = 1; getline(operations_input, input_line); i++)
         {
             switch (i)
             {

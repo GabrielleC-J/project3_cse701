@@ -3,8 +3,8 @@
  * @file big_int.hpp
  * @author Gabrielle Ching-Johnson
  * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
- * @version 0.1
- * @date Dec 12, 2021
+ * @version 0.2
+ * @date Dec 17, 2021
  */
 
 #include <iostream>

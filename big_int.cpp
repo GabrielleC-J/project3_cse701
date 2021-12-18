@@ -2,8 +2,8 @@
  * @file BigInt.cpp
  * @author Gabrielle Ching-Johnson
  * @brief C++ code file for arbitrary precision integer arithmetic
- * @version 0.1
- * @date Dec 11, 2021
+ * @version 0.2
+ * @date Dec 19, 2021
  */
 
 #include <iostream>

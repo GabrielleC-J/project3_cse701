@@ -331,8 +331,118 @@ void check_not_equals_and_equals(ofstream &file)
     check(pos_2 != pos_1, file);
 }
 
+void read_values(vector<string> &value_vec, const string &line, const uint8_t &line_num)
+{
+    string value;
+    istringstream line_stream(line);
+    while (getline(line_stream, value, ','))
+    {
+        value_vec.push_back(value);
+    }
+
+    // Check number of input values per line
+    uint64_t size = value_vec.size();
+    if (line_num == 1 || line_num == 2 || line_num == 6)
+    {
+        if (size != 4)
+        {
+            throw invalid_argument("Invalid number of integers, expected 4 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
+        }
+    }
+    else
+    {
+        if (size != 3)
+        {
+            throw invalid_argument("Invalid number of integers, expected 3 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
+        }
+    }
+
+    // Check all values are numbers in the vector or boolean
+    for (const string &integers : value_vec)
+    {
+        if (line_num == 6)
+        {
+            if (integers != "true" && integers != "false")
+            {
+                throw invalid_argument("Invalid bool provided in line 6 expected either true or false but got " + integers + "\n");
+            }
+        }
+        else
+        {
+            string::const_iterator start = integers.begin();
+            if ((integers[0] == '+' || integers[0] == '-') && integers.size() != 1)
+            {
+                start++;
+            }
+            if (!all_of(start, integers.end(), ::isdigit))
+            {
+                throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + "\n");
+            }
+        }
+    }
+}
+
 int main()
 {
+    /***************************************** Read Input File ******************************************/
+    string input_file = "../test_input.txt";
+    ifstream operations_input(input_file);
+    if (!operations_input.is_open())
+    {
+        cout << "Error opening input file"
+             << "../ test_input.txt ";
+        return -1;
+    }
+
+    string input_line;
+    vector<string> numbers;
+    vector<string> sums;
+    vector<string> diffs;
+    vector<string> products;
+    vector<string> quotients;
+    vector<string> greater_less;
+    try
+    {
+        uint8_t line_counter = 0;
+        for (uint8_t i = 1; getline(operations_input, input_line) || i < 7; i++)
+        {
+            switch (i)
+            {
+            case 1:
+                read_values(numbers, input_line, i);
+                break;
+            case 2:
+                read_values(sums, input_line, i);
+                break;
+            case 3:
+                read_values(diffs, input_line, i);
+                break;
+            case 4:
+                read_values(products, input_line, i);
+                break;
+            case 5:
+                read_values(quotients, input_line, i);
+                break;
+            case 6:
+                read_values(greater_less, input_line, i);
+                break;
+            default:
+                break;
+            }
+            line_counter++;
+        }
+
+        if (line_counter != 6)
+        {
+            throw invalid_argument("Invalid number of lines read, expected 6 lines but only read " + to_string(line_counter) + "\n");
+        }
+    }
+    catch (invalid_argument &exception)
+    {
+        cout << exception.what();
+        return -1;
+    }
+
     /***************************************** Open Log File ********************************************/
     /* Referenced the following for filesystem class:
            https://en.cppreference.com/w/cpp/filesystem/path

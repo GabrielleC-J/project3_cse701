@@ -234,19 +234,22 @@ void check_multiplication(vector<big_int> numbers, vector<string> products, ofst
 /**
  * @brief Test the division operator overload for big integers
  */
-void check_division(ofstream &file)
+void check_division(vector<big_int> numbers, vector<string> quotients, ofstream &file)
 {
-    big_int pos_1("56789738193238029839");
+    big_int pos_2("893293838329865");
     big_int neg_1("-464836");
 
+    file << " Hard Coded tests:\n";
     file << "Checking division for dividend value < divisor value ...";
     check("+0" == print_base10(neg_1 / pos_2), file);
+
+    file << "Random Big Integers Tests:\n";
 
     file << "Checking division by zero exception thrown ...";
     try
     {
         big_int zero;
-        pos_1 / zero;
+        numbers[0] / zero;
         // Failed to throw exception
         check(false, file);
     }
@@ -256,38 +259,43 @@ void check_division(ofstream &file)
         check(true, file);
     }
 
-    file << "Checking division for negative dividend and positive divisor integers ...";
-    check("-4893" == print_base10(neg_1 / small_1), file);
+    file << "Checking division for two positive integers ...";
+    check(quotients[0] == print_base10(numbers[0] / numbers[1]), file);
 
-    file << "Checking division for positive dividend and negative divisor integers ...";
-    check("-5" == print_base10(pos_3 / neg_2), file);
+    file << "Checking division for  two negative numbers ...";
+    check(quotients[1] == print_base10(numbers[2] / numbers[3]), file);
 
-    file << "Checking division of two positive numbers ...";
-    check("+63573" == print_base10(pos_1 / pos_2), file);
+    file << "Checking division of a negative and positive number ...";
+    check(quotients[2] == print_base10(numbers[2] / numbers[0]), file);
 }
 
 /**
  * @brief Test the < and > operator overload for big integers
  */
-void check_less_and_greater_than(ofstream &file)
+void check_less_and_greater_than(vector<big_int> numbers, vector<string> bool_sols, ofstream &file)
 {
     big_int pos_1("235632");
-    big_int pos_2("46383");
-    big_int neg_1("-3654836");
-    big_int neg_2("-76327");
     big_int more_digits("3764839473947839");
+    bool solution;
 
+    file << "Random Big Integers Tests:\n";
     file << "Checking less than for two positive numbers ...";
-    check(pos_2 < pos_1, file);
+    istringstream(bool_sols[0]) >> boolalpha >> solution; // convert string solution to boolean
+    check(((numbers[0] < numbers[1]) == solution), file);
 
     file << "Checking greater than for exact same numbers as two positive less than ...";
-    check(pos_1 > pos_2, file);
+    istringstream(bool_sols[1]) >> boolalpha >> solution; // convert string solution to boolean
+    check(((numbers[1] > numbers[0]) == solution), file);
 
     file << "Checking less than for two negative numbers ...";
-    check(neg_1 < neg_2, file);
+    istringstream(bool_sols[2]) >> boolalpha >> solution; // convert string solution to boolean
+    check(((numbers[2] < numbers[3]) == solution), file);
 
     file << "Checking less than for negative and positive numbers ...";
-    check(neg_1 < pos_1, file);
+    istringstream(bool_sols[3]) >> boolalpha >> solution; // convert string solution to boolean
+    check(((numbers[2] < numbers[0]) == solution), file);
+
+    file << "Hard Coded tests:\n";
 
     file << "Checking less than for integers with different number of digits in base 2^32 ...";
     check(pos_1 < more_digits, file);
@@ -296,21 +304,17 @@ void check_less_and_greater_than(ofstream &file)
 /**
  * @brief Test != and == operator overload for big integers
  */
-void check_not_equals_and_equals(ofstream &file)
+void check_not_equals_and_equals(vector<big_int> numbers, ofstream &file)
 {
-    big_int pos_1("3764839473947839");
-    big_int equal_pos_1("+3764839473947839");
-    big_int neg_1("-3764839473947839");
-    big_int pos_2("46383");
 
     file << "Checking equals for the same value ...";
-    check(pos_1 == equal_pos_1, file);
+    check(numbers[0] == numbers[0], file);
 
     file << "Checking not equals for the same value but different sign ...";
-    check(pos_1 != neg_1, file);
+    check(numbers[0] != numbers[2], file);
 
     file << "Checking not equals for two different values ...";
-    check(pos_2 != pos_1, file);
+    check(numbers[0] != numbers[1], file);
 }
 
 /**
@@ -511,19 +515,19 @@ int main()
 
     log << "\n***********Testing division of the big_int class:***********\n";
     cout << "Testing Division\n";
-    check_division(log);
+    check_division(big_numbers, quotients, log);
     number_tests_passed(log);
     update_counters();
 
     log << "\n************Testing less than and greater than operator of big_int class:************\n";
     cout << "Testing Less than and Greater than Operator\n";
-    check_less_and_greater_than(log);
+    check_less_and_greater_than(big_numbers, greater_less, log);
     number_tests_passed(log);
     update_counters();
 
     log << "\n************Testing equals and not equals operator of big_int class:************\n";
     cout << "Testing Equals and Not Equals Operator\n";
-    check_not_equals_and_equals(log);
+    check_not_equals_and_equals(big_numbers, log);
     number_tests_passed(log);
     update_counters();
 

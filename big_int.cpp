@@ -30,7 +30,7 @@ big_int::big_int(const int64_t &integer)
     // Divide by base of 2^32 and add remainder to the coefficient vector of digits
     uint32_t remainder = (uint32_t)(value % base);
     coefficient.push_back(remainder);
-    while (value > base)
+    while (value >= base)
     {
         value = value / base;
         remainder = (uint32_t)(value % base); // remainder always < base
@@ -70,7 +70,7 @@ big_int::big_int(const string &integer) : coefficient((1))
 big_int::big_int(const big_int &big_integer)
 {
     // Copy the digits of the argument big integer
-    for (const uint32_t &digits : big_integer.coefficient) // ***TODO: See if breaks encapsulation***
+    for (const uint32_t &digits : big_integer.coefficient)
     {
         coefficient.push_back(digits);
     }
@@ -129,7 +129,7 @@ big_int &big_int::operator=(const big_int &big_integer)
         return *this;
     }
 
-    // Set the coefficient and integer_sing of this object to that of argument
+    // Set the coefficient and integer_sign of this object to that of argument
     coefficient = big_integer.coefficient;
     integer_sign = big_integer.get_sign();
 
@@ -179,9 +179,14 @@ void big_int::add_32(const uint32_t &integer)
 
 void big_int::divide_32(const uint32_t &integer)
 {
+    // Check division by zero
+    if (integer == 0)
+    {
+        throw division_by_zero();
+    }
 
     uint64_t remainder = 0;
-    // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
+    // Start with most significant digit. Take each digit, add it to the remainder (from previous division) times the base and then divide by integer
     for (uint64_t i = coefficient.size(); i > 0; i--)
     {
         uint64_t temp = (base * remainder) + coefficient[i - 1];
@@ -193,7 +198,7 @@ void big_int::divide_32(const uint32_t &integer)
 uint32_t big_int::remainder_32(const uint32_t &integer) const
 {
     uint64_t remainder = 0;
-    // Start with most significant digit. Take each digit, add it to the remainder(from previous division) times the base and then divide by integer
+    // Start with most significant digit. Take each digit, add it to the remainder (from previous division) times the base and then divide by integer
     for (uint64_t i = coefficient.size(); i > 0; i--)
     {
         uint64_t temp = (base * remainder) + coefficient[i - 1];
@@ -274,7 +279,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
     // Both integers are negative case
     if (int_a.get_sign() == sign::NEGATIVE && int_b.get_sign() == sign ::NEGATIVE)
     {
-        // add the two big integers (no need for radix complement since both negative)
+        // add the two big integers (no need for radix complement since both are negative)
         sum.coefficient = add_coefficients(int_a.coefficient, int_b.coefficient);
 
         // Change the sign of sum big int to negative
@@ -288,7 +293,7 @@ big_int operator+(const big_int &int_a, const big_int &int_b)
         sum.coefficient = add_coefficients(int_a.radix_complement(), int_b.coefficient);
 
         /* update sum big int sign to negative if int_a is a bigger value
-           and update the sum digits to the radix complement (since result is negative and in radix complement)*/
+           and update the sum digits to the radix complement (since result is negative and in radix complement form)*/
         if (int_a.coefficient_size() > int_b.coefficient_size())
         {
             sum.integer_sign = sign::NEGATIVE;
@@ -445,7 +450,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
         return quotient;
     }
     // if divisor equals 1 ***Optimization TODO***
-    if (divisor == one)
+    else if (divisor == one)
     {
         quotient = dividend;
         return quotient;

@@ -280,6 +280,10 @@ void check_division(const vector<big_int> &numbers, const vector<string> &quotie
         check(true, file);
     }
 
+    file << "Checking division by one ...";
+    big_int one(1);
+    check(print_base10(numbers[0]) == print_base10(numbers[0] / one), file);
+
     file << "Checking division for two positive integers ...";
     check(quotients[0] == print_base10(numbers[0] / numbers[1]), file);
 

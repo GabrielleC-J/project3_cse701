@@ -4,7 +4,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief Header file for arbitrary precision integer arithmetic through the creation of a class called big_int that represents big integers
  * @version 0.2
- * @date Dec 17, 2021
+ * @date Dec 19, 2021
  */
 
 #include <iostream>
@@ -14,7 +14,7 @@
 using namespace std;
 
 /**
- * @brief This class will be used to indicate whetHer a big_int is positive or negative
+ * @brief This enum class will be used to indicate whetHer a big_int is positive or negative
  */
 enum class sign
 {
@@ -51,6 +51,7 @@ class big_int
      * @return A big_int that represents the result of the two big_ints multiplied
      */
     friend big_int operator*(const big_int &int_a, const big_int &int_b);
+
     /**
      * @brief A friend function that divides two big integers
      * @param int_a The big_int that is the dividend
@@ -94,7 +95,7 @@ public:
     big_int(const vector<uint32_t> &vec);
 
     /**
-     * @brief Copy Constructor -> Initialize a big integer(big_int) from another big integer
+     * @brief Copy Constructor -> Initialize a big integer (big_int) from another big integer
      * @param big_integer A big_int to copy
      */
     big_int(const big_int &big_integer);
@@ -156,13 +157,13 @@ private:
     /**
      * @brief Multiplies an unsigned 32 bit integer to the current big number
      * @details Helper function for reading in a string
-     * @param integer a 32bit integer
+     * @param integer a 32 bit integer
      */
     void multiply_32(const uint32_t &integer);
 
     /**
      * @brief Adds an unsigned 32 bit integer to the current big number
-     * @details helper function for reading in string
+     * @details Helper function for reading in string
      * @param integer a 32 bit integer
      */
     void add_32(const uint32_t &integer);
@@ -170,12 +171,12 @@ private:
     /**
      * @brief Divides the current big number by an unsigned 32 bit integer
      * @details Helper function for writing to a string
-     * @param integer a 32bit integer
+     * @param integer a 32 bit integer
      */
     void divide_32(const uint32_t &integer);
 
     /**
-     * @brief Finds the remainder of the currend big int divided by an unsigned 32 bit integer
+     * @brief Finds the remainder of the current big int divided by an unsigned 32 bit integer
      * @details Helper function for writing to a string
      * @param integer a 32 bit integer
      * @return integer indicating the remainder
@@ -201,7 +202,7 @@ public:
 };
 
 /**
- * @brief Exception to be thrown in dividing by zero
+ * @brief Exception to be thrown if dividing by zero
  */
 class division_by_zero : public invalid_argument
 {

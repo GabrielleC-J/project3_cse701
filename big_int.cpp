@@ -449,7 +449,7 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
     {
         return quotient;
     }
-    // if divisor equals 1 ***Optimization TODO***
+    // if divisor equals 1
     else if (divisor == one)
     {
         quotient = dividend;

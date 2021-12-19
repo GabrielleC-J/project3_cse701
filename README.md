@@ -3,7 +3,7 @@
 December 12, 2021
 
 ## Background Information
-In many computer programs the precision of an arithmetic operation is limited to the word size in which a computer has. In many modern day desktop computers a typical word size is 64 bits. Thus the largest number that can be represented in any program would be $2^{64} = 1.8446744*10^{19}$ if only looking at unsigned integers. However if one is using signed integers the largest range of values available is approximately $-9.2233720 *10^{18}$ to $9.2233720 *10^{18}$. There are also word sizes of 32 bits, 16 bits and 8 bits which have smaller ranges. However in many cases while doing an arithmetic operation, like addition and multiplication, the result could have a higher value that allowed by the computer. Thus the results in this case would not be accurate or correct.
+In many computer programs the precision of an arithmetic operation is limited to the word size in which a computer has. In many modern day desktop computers a typical word size is 64 bits. Thus the largest number that can be represented in any program would be $2^{64} = 1.8446744*10^{19}$ if only looking at unsigned integers. However if one is using signed integers the largest range of values available is approximately $-9.2233720 *10^{18}$ to $9.2233720 *10^{18}$. There are also word sizes of 32 bits, 16 bits and 8 bits which have smaller ranges. However in many cases while doing an arithmetic operation, like addition and multiplication, the result could have a higher value than allowed by the computer. Thus the results in this case would not be accurate or correct.
 
 Every number can be presented in the following manner:
 
@@ -40,7 +40,7 @@ Utilizing the form specified in the background information for integers, instead
 ### Data Structure for Digits storage
 The data structure used to store the digits is a vector of unsigned 32 bit integers called coefficients: `vector<uint32_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, these operations will use 64 bit intermediate values since each coefficient/digit can only have a value less than the base.
 
-The storage of the digits will be in little endian form, thus the least significant digit(LSD) will be at index 0 in the vector and the most significant digit(MSD) will be at index (vector_size - 1). This storage method makes it easier for the addition, subtraction and multiplication operations.
+The storage of the digits will be in little endian form, thus the least significant digit (LSD) will be at index 0 in the vector and the most significant digit (MSD) will be at index (vector_size - 1). This storage method makes it easier for the addition, subtraction and multiplication operations.
 
 For example in base 10 for integer 12345: the LSD: 5 and MSD: 1 and the vector (in base 10) would be {5, 4, 3, 2, 1}
 
@@ -64,7 +64,7 @@ sign integer_sign = sign::NEGATIVE
     // Construct a big int with value -65
     big_int integer(-65);
     ```
-3. String constructor: This constructor will take a string argument as the input and create a `big_int` with the value specified by the string in base 2^32^. 
+3. String constructor: This constructor will take a string argument as the input and create a `big_int` with the value specified by the string in base $2^{32}$. 
     * The very first character in the string can be a `-` indicating a negative number, a `+` indicating a positive number or nothing indicating a positive number.
     * All other characters in the string must be digits from 0 to 9.
     * This will throw an exception called `invalid_string_integer` if an invalid character (that is not a digit) is provided
@@ -114,7 +114,7 @@ The output:
 ### The Method
 In order to get the base 10 digits, first divide the big_int by 10 and the remainder of this division will be the least significant digit of the integer in base 10. Then continuously divide by 10 and get the remaining digits using the remainder until the division by ten results in 0.
 
-The helper private functions of the class `big_int` that are used by this function are `divide32() and remainder32()`. The `divide32()` function takes an unsigned 32 bit integer argument and divides the big integer by this value and thus will be used when dividing by 10. While the `remainder32()` takes an unsigned 32 bit integer argument and outputs the remainder of the big integer divided by this value and thus will be used when finding the remainder by dividing by 10.
+The helper private functions of the class `big_int` that are used by this function are `divide32() and remainder32()`. The `divide32()` function takes an unsigned 32 bit integer argument and divides the big integer by this value and thus will be used when dividing by 10. While the `remainder32()` takes an unsigned 32 bit integer argument and outputs the remainder of the big integer divided by this value and thus will be used when finding the remainder by dividing by 10.[^1]
 
 ## Member Functions
 
@@ -185,13 +185,13 @@ big_int sum = positive_1 + positive_2;
 
 **Addition including negative numbers**
 
-In order to add negative numbers the radix complement is used. In this case, the radix complement is the 2^32's complement.
+In order to add negative numbers the radix complement is used. In this case, the radix complement is the 2^32's complement.[^2]
 
 When a negative number is being added in the addition, the big_int is converted to its radix complement and then added.
 
 * If two negative values are added then they are both converted to their radix complement and then added.
 * If the result of an addition is in fact negative, then the result will be in radix complement form and must be converted (ie get the radix complement of the radix complement).
-* When adding a negative and positive number where the positive is greater than the negative, then by using the radix complement an extra carry must be deleted at the last index.
+* When adding a negative and positive number where the positive is greater than the negative, then by using the radix complement an extra carry must be deleted at the last index.[^2]
 
 Example:
 
@@ -269,7 +269,7 @@ Example:
 big_int int_a(59);
 big_int int_b(5);
 
-big_int quotient = int_a / int_b;
+big_int quotient = int_a / int_b; //59/5 = 11.8
 print_base10(quotient) == "+11";
 ```
 
@@ -337,7 +337,7 @@ a is not equal to b
 ## Testing of Library
 The file ***big_int_test.cpp*** contains all the unit tests for the `big_int` class.
 
-There are a total of 38 tests and this tests all the arithmetic operations, the constructors and the print_base10 function. All the tests on the constructors and a couple of other tests are hard coded to explore certain boundaries of the operations.
+There are a total of 39 tests which tests all the arithmetic operations, the constructors and the print_base10 function. All the tests on the constructors and a couple of other tests are hard coded to explore certain boundaries of the operations.
 
 The rest of the tests are based off of 4 random big integer numbers that will be read from an input file called ***test_input.txt***. This file was created using a python script called ***create_random_nums.py***. The following tests will utilize the 4 integers and their solutions need to be read from the input:
 
@@ -368,7 +368,7 @@ The tests for the printing, != operator and == operator utilize the 4 random num
 
 ### Python Script - create_random_nums.py
 
-This python script is used to choose 4 random big numbers: 2 positive and 2 negative integers. These will be used to calculate the results for the tests (stated above) for addition, subtraction, multiplication, division and the comparison operators.
+This python script is used to choose 4 random big numbers: 2 positive and 2 negative integers. Currently the script picks two positive numbers in the range [0, $2^{1024}$] and two negative numbers in the range[$-2^{1024}$, 0).  The four integers will be used to calculate the results for the tests (stated above) for addition, subtraction, multiplication, division and the comparison operators.
 
 The order and structure of the numbers and results can be found under the input file section below.
 
@@ -406,3 +406,7 @@ false,false,true,true
 
 A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended to the end of the name until the file does not exist, thus not deleting any existing log files.
 
+## References 
+[^1]: Hansen, P. (1994). Multiple-length division revisited: A tour of the minefield. Software: Practice And Experience, 24(6), 579-601. doi: 10.1002/spe.4380240605
+
+[^2]: Weik M.H. (2000) radix-minus-one complement. In: Computer Science and Communications Dictionary. Springer, Boston, MA. https://doi.org/10.1007/1-4020-0613-6_15429

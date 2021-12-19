@@ -38,7 +38,7 @@ The operations that can occur on "big_int"s in the library are:
 Utilizing the form specified in the background information for integers, instead of storing integers in base 10, this library will store the integers in base $2^{32}$ to save memory space.
 
 ### Data Structure for Digits storage
-The data structure used to store the digits is a vector of unsigned 32 bit integers called coefficients: `vector<uint32_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, these operations will use 64 bit intermediate values in order to find the carry values since each coefficient/digit can only have a value less than the base.
+The data structure used to store the digits is a vector of unsigned 32 bit integers called coefficients: `vector<uint32_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, these operations will use 64 bit intermediate values since each coefficient/digit can only have a value less than the base.
 
 The storage of the digits will be in little endian form, thus the least significant digit(LSD) will be at index 0 in the vector and the most significant digit(MSD) will be at index (vector_size - 1). This storage method makes it easier for the addition, subtraction and multiplication operations.
 
@@ -54,7 +54,7 @@ sign integer_sign = sign::NEGATIVE
 *Note: That for negative values, the digits are stored as if they are positive, but the sign will indicate that the value is actually negative*
 
 ## Constructors and Input
-1. Defalut constructor : This will create a big integer that has the value of zero.
+1. Default constructor : This will create a big integer that has the value of zero.
    ```cpp
     // Construct a big int with value zero
     big_int zero;
@@ -337,7 +337,72 @@ a is not equal to b
 ## Testing of Library
 The file ***big_int_test.cpp*** contains all the unit tests for the `big_int` class.
 
-There are a total of 37 tests and this tests all the arithmetic operations, the constructors and the print_base10 function.
+There are a total of 38 tests and this tests all the arithmetic operations, the constructors and the print_base10 function. All the tests on the constructors and a couple of other tests are hard coded to explore certain boundaries of the operations.
 
-A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended too the end of the name until the file does not exist, thus not deleting any existing log files.
+The rest of the tests are based off of 4 random big integer numbers that will be read from an input file called ***test_input.txt***. This file was created using a python script called ***create_random_nums.py***. The following tests will utilize the 4 integers and their solutions need to be read from the input:
+
+1. sum of two numbers:
+   *  2 positive numbers
+   *  2 negative numbers
+   *  a negative and positive number
+   *  a different positive and negative number.
+2. difference of two numbers:
+   * 2 positive numbers
+   * a negative and positive number
+   * 2 negative numbers
+3. product of two numbers:
+   * 2 positive numbers
+   * 2 negative numbers
+   * a positive and negative number
+4. quotient of two numbers:
+   * 2 positive numbers
+   * 2 negative numbers
+   * a negative nad positive number
+5. comparison of 2 numbers (greater than and less than)
+   * 2 positive numbers (using less than)
+   * 2 positive numbers (using greater than and the same numbers as above)
+   * 2 negative numbers
+   * a negative and positive number
+
+The tests for the printing, != operator and == operator utilize the 4 random numbers however do not need their solutions to be calculated by the python script.
+
+### Python Script - create_random_nums.py
+
+This python script is used to choose 4 random big numbers: 2 positive and 2 negative integers. These will be used to calculate the results for the tests (stated above) for addition, subtraction, multiplication, division and the comparison operators.
+
+The order and structure of the numbers and results can be found under the input file section below.
+
+### Input file - test_input.txt
+The input file test_input.txt will be read by the c++ test file to read the 4 random integers and the results of the operations found using the python script. All the results will contain either a + or a - sign as they will be compared with the printing output of the big integer which contains the sign. Note that the 2 positive integers in the 1st line do not need the sign, but can have it. The file will contain 6 lines:
+
+1. The 4 random integers (pos_1, pos_2, neg_1, neg_2)
+2. Sum solutions
+3. Difference solutions
+4. Product solutions
+5. Quotient solutions
+6. Greater and less than test solutions
+
+The structure of the file is as follows:
+
+* pos_1, pos_2, neg_1, neg_2
+* pos_1 + pos_2, neg_1 + neg_2, pos_1 + neg_1, neg_2 + pos_2
+* pos_1 - pos_2, neg_1 - pos_1, neg_1 - neg_2
+* pos_1 * pos_2, neg_1 * neg_2, pos_1 * neg_1
+* pos_1 / pos_2, neg_1 / neg_2, neg_1 / pos_1
+* pos_1 < pos_2, pos_2 > pos_1, neg_1 < neg_2, neg_1 < pos_1
+
+An example input file with simple numbers would be:
+
+```none
++45,+2,-13,-5
++47,-18,+32,-3
++43,-58,-18
++90,+65,-585
++22,+2,+0
+false,false,true,true
+```
+
+### Log file
+
+A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended to the end of the name until the file does not exist, thus not deleting any existing log files.
 

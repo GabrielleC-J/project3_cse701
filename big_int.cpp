@@ -558,11 +558,21 @@ bool operator<(const big_int &int_a, const big_int &int_b)
     else if (int_a.get_sign() == sign::POSITIVE && int_b.get_sign() == sign::NEGATIVE)
         return false;
 
-    // Since both ints have same sign, check if int a has more digits than b
+    // Since both ints have same sign, check if int a has more digits than b and return based on sign
     else if (a_size < b_size)
-        return true;
+    {
+        if (a_sign == sign::POSITIVE)
+            return true;
+        else
+            return false;
+    }
     else if (a_size > b_size)
-        return false;
+    {
+        if (a_sign == sign::POSITIVE)
+            return false;
+        else
+            return true;
+    }
 
     // Both ints have same number of digits, starting with most significant, go digit by digit and compare
     // If digits are the same move to next digit

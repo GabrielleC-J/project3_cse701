@@ -3,7 +3,7 @@
  * @author Gabrielle Ching-Johnson
  * @brief This file runs unit tests for the big_int class
  * @version 0.2
- * @date Dec 18, 2021
+ * @date Dec 19, 2021
  */
 
 #include <iostream>
@@ -93,7 +93,7 @@ void check_other_constructors(ofstream &file)
 void check_integer_constructor(ofstream &file)
 {
     // Check constructor with an integer argument
-    file << "\nConstructor checks with Integer argument:\n";
+    file << "\nConstructor checks with integer argument:\n";
 
     file << "Integer value less than 2^32 ...";
     big_int construct_int(4000);
@@ -349,7 +349,9 @@ void check_not_equals_and_equals(const vector<big_int> &numbers, ofstream &file)
 
 /**
  * @brief Read input values into desired vector and check for invalid input
- * @param value_vec
+ * @param value_vec The vector to store the values 
+ * @param line A string containing the values to store seperated by a comma
+ * @param line_num Integer indicating which line from input file the string came from
  */
 void read_values(vector<string> &value_vec, const string &line, const uint8_t &line_num)
 {
@@ -408,12 +410,12 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
 int main()
 {
     /***************************************** Read Input File ******************************************/
-    string input_file = "../test_input.txt";
+    string input_file = "test_input.txt";
     ifstream operations_input(input_file);
     if (!operations_input.is_open())
     {
         cout << "Error opening input file"
-             << "../ test_input.txt ";
+             << "test_input.txt\n";
         return -1;
     }
 
@@ -469,7 +471,7 @@ int main()
         return -1;
     }
 
-    // update the big_int vector with values
+    // update the big_int vector with the four random values
     for (const string &integers : numbers)
     {
         big_numbers.push_back(big_int(integers));

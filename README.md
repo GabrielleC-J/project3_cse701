@@ -404,6 +404,8 @@ An example input file with simple numbers would be:
 false,false,true,true
 ```
 
+Note that an example input file can be found in the test_input.txt file included in this project.
+
 ### Log file
 
 A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended to the end of the name until the file does not exist, thus not deleting any existing log files.

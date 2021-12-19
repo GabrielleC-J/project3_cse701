@@ -445,6 +445,11 @@ big_int operator/(const big_int &dividend, const big_int &divisor)
         return quotient;
     }
     // if divisor equals 1 ***Optimization TODO***
+    if (divisor == one)
+    {
+        quotient = dividend;
+        return quotient;
+    }
 
     // set the remainder big_int to the 1st divisor_size - 1 digits of the dividend
     big_int remainder;

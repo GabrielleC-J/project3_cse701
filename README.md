@@ -37,7 +37,7 @@ The operations that can occur on "big_int"s in the library are:
 ### Base
 Utilizing the form specified in the background information for integers, instead of storing integers in base 10, this library will store the integers in base $2^{32}$ to save memory space.
 
-### Data Structure for Digits storage
+### Data Structure for Digits Storage
 The data structure used to store the digits is a vector of unsigned 32 bit integers called coefficients: `vector<uint32_t> coefficients`. To account for overflow when doing arithmetic operations on the digits, these operations will use 64 bit intermediate values since each coefficient/digit can only have a value less than the base.
 
 The storage of the digits will be in little endian form, thus the least significant digit (LSD) will be at index 0 in the vector and the most significant digit (MSD) will be at index (vector_size - 1). This storage method makes it easier for the addition, subtraction and multiplication operations.
@@ -91,7 +91,7 @@ sign integer_sign = sign::NEGATIVE
 
 ## Printing to a string in base 10
 
-The function `print_base10()` is a friend function of the `big_int` class. The method takes a `big_int` as the input argument and will print the value of the big integer, that is stored in base 2^32^, as a base 10 integer.
+The function `print_base10()` is a friend function of the `big_int` class. The method takes a `big_int` as the input argument and will print the value of the big integer, that is stored in base $2^{32}$, as a base 10 integer.
 
 Example:
 ```cpp
@@ -191,7 +191,7 @@ When a negative number is being added in the addition, the big_int is converted 
 
 * If two negative values are added then they are both converted to their radix complement and then added.
 * If the result of an addition is in fact negative, then the result will be in radix complement form and must be converted (ie get the radix complement of the radix complement).
-* When adding a negative and positive number where the positive is greater than the negative, then by using the radix complement an extra carry must be deleted at the last index.[^2]
+* When adding a negative and positive number where the positive is greater than the negative, due to the use of the radix complement an extra carry must be removed at the last index.[^2]
 
 Example:
 
@@ -228,7 +228,7 @@ print_base10(negative) -> // "-65"
 
 ### The Subtraction Operator
 
-The Subtraction operator takes two `big_int`s as arguments and produces a `big_int` object that's value is the difference of the two.
+The subtraction operator takes two `big_int`s as arguments and produces a `big_int` object that's value is the difference of the two.
 
 This operator just employs the addition and negation operator.
 
@@ -243,9 +243,9 @@ big_int diff = int_a - int_b
 
 ### Multiplication Operator
 
-The Multiplication operator takes two `big_int`s as inputs and outputs a `big_int` object whose value is the product of the two.
+The multiplication operator takes two `big_int`s as inputs and outputs a `big_int` object whose value is the product of the two.
 
-The operator employs basic integer multiplication by going digit by digit of one integer and multiplying it by all digits of the other integers and summing up the outputs.
+The operator employs basic integer multiplication by going digit by digit of one integer and multiplying it by all digits of the other integer and summing up the outputs.
 
 Example:
 
@@ -317,7 +317,7 @@ a is bigger
 
 ### "!=" Operator
 
-This operator takes in tow `big_int` arguments and returns a boolean stating true if the arguments do not have the same value.
+This operator takes in two `big_int` arguments and returns a boolean stating true if the arguments do not have the same value.
 
 Example
 
@@ -370,10 +370,12 @@ The tests for the printing, != operator and == operator utilize the 4 random num
 
 This python script is used to choose 4 random big numbers: 2 positive and 2 negative integers. Currently the script picks two positive numbers in the range [0, $2^{1024}$] and two negative numbers in the range[$-2^{1024}$, 0).  The four integers will be used to calculate the results for the tests (stated above) for addition, subtraction, multiplication, division and the comparison operators.
 
+This script writes all of the output to a file called test_input.txt in the same directory from which it is run.
+
 The order and structure of the numbers and results can be found under the input file section below.
 
 ### Input file - test_input.txt
-The input file test_input.txt will be read by the c++ test file to read the 4 random integers and the results of the operations found using the python script. All the results will contain either a + or a - sign as they will be compared with the printing output of the big integer which contains the sign. Note that the 2 positive integers in the 1st line do not need the sign, but can have it. The file will contain 6 lines:
+The input file test_input.txt will be read in the big_int_test.cpp file. This file contains the 4 random integers and the results of the operations found using the python script. All the results will contain either a + or a - sign as they will be compared with the printing output of the big integer which contains the sign. Note that the 2 positive integers in the 1st line do not need the sign, but can have it. The file will contain 6 lines:
 
 1. The 4 random integers (pos_1, pos_2, neg_1, neg_2)
 2. Sum solutions
@@ -405,6 +407,11 @@ false,false,true,true
 ### Log file
 
 A log of all the tests will be written to a file named ***log_file_big_int_tests.txt***. If this file already exists a number will be appended to the end of the name until the file does not exist, thus not deleting any existing log files.
+
+## CMake and Location of input and log file
+The input file must be found in the current directory from which the application is run. Note that the output file will also be placed in the current directory.
+
+This project utilizes CMake and places the executable in the build folder. If the makefile is used to run the program, it will expect the input file to be in the same directory (currently the build folder) and will place the output file in this directory as well. **Therefore if you wish to utilize the python script to create the input file and you are using the makefile, then you must move the input file to the build folder.**
 
 ## References 
 [^1]: Hansen, P. (1994). Multiple-length division revisited: A tour of the minefield. Software: Practice And Experience, 24(6), 579-601. doi: 10.1002/spe.4380240605

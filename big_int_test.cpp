@@ -404,6 +404,7 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
             {
                 throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + " of the input file, all integers must contain a + or - sign\n");
             }
+            
             // Check rest of the values that they are digits
             if (!all_of(start, integers.end(), ::isdigit))
             {

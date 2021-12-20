@@ -414,7 +414,7 @@ int main()
     ifstream operations_input(input_file);
     if (!operations_input.is_open())
     {
-        cout << "Error opening input file"
+        cout << "Error opening input file "
              << "test_input.txt\n";
         return -1;
     }

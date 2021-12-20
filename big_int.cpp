@@ -1,5 +1,5 @@
 /**
- * @file BigInt.cpp
+ * @file big_int.cpp
  * @author Gabrielle Ching-Johnson
  * @brief C++ code file for arbitrary precision integer arithmetic
  * @version 0.2

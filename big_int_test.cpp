@@ -369,14 +369,14 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
     {
         if (size != 4)
         {
-            throw invalid_argument("Invalid number of integers, expected 4 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
+            throw invalid_argument("Invalid number of integers in input file, expected 4 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
         }
     }
     else
     {
         if (size != 3)
         {
-            throw invalid_argument("Invalid number of integers, expected 3 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
+            throw invalid_argument("Invalid number of integers in input file, expected 3 but got " + to_string(size) + " in line " + to_string(line_num) + "\n");
         }
     }
 
@@ -387,7 +387,7 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
         {
             if (integers != "true" && integers != "false")
             {
-                throw invalid_argument("Invalid bool provided in line 6 expected either true or false but got " + integers + "\n");
+                throw invalid_argument("Invalid bool provided in line 6 of the input file expected either true or false but got " + integers + "\n");
             }
         }
         else
@@ -402,12 +402,12 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
             // Check if line contains results and if so throw invalid argument as failed above condition but must contain a positive or negative sign
             else if (line_num != 1)
             {
-                throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + ", all integers must contain a + or - sign\n");
+                throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + " of the input file, all integers must contain a + or - sign\n");
             }
             // Check rest of the values that they are digits
             if (!all_of(start, integers.end(), ::isdigit))
             {
-                throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + "\n");
+                throw invalid_argument("Invalid input provided in line " + to_string(line_num) + " of the input file, expected an integer but received: " + integers + "\n");
             }
         }
     }

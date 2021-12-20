@@ -470,6 +470,9 @@ int main()
         cout << exception.what();
         return -1;
     }
+    
+    // Close input file
+    operations_input.close();
 
     // update the big_int vector with the four random values
     for (const string &integers : numbers)

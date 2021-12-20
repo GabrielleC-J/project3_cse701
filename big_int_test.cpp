@@ -394,9 +394,15 @@ void read_values(vector<string> &value_vec, const string &line, const uint8_t &l
         {
             string::const_iterator start = integers.begin();
             // Check 1st character if + or - sign and move iterator start to next char if sign is there and string is not a single char
-            if ((integers[0] == '+' || integers[0] == '-') && integers.size() != 1)
+            if (integers[0] == '+' || integers[0] == '-')
             {
-                start++;
+                if (integers.size() != 1) // only update iterator if integer is not a single character
+                    start++;
+            }
+            // Check if line contains results and if so throw invalid argument as failed above condition but must contain a positive or negative sign
+            else if (line_num != 1)
+            {
+                throw invalid_argument("Invalid integer provided in line " + to_string(line_num) + ", all integers must contain a + or - sign\n");
             }
             // Check rest of the values that they are digits
             if (!all_of(start, integers.end(), ::isdigit))
@@ -470,7 +476,7 @@ int main()
         cout << exception.what();
         return -1;
     }
-    
+
     // Close input file
     operations_input.close();
 

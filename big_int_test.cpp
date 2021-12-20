@@ -23,7 +23,7 @@ uint8_t total_failed = 0;
 /**
  * @brief Checks if each unit test passes or fails and writes output to log file
  * @param condition bool indication true if test passed and false if test failed
- * @param file file to write outcome of tests
+ * @param file The log file to write the outcome of the tests
  */
 void check(bool condition, ofstream &file)
 {
